@@ -1,5 +1,5 @@
 # Screen Casting App
-Creates screenshots from the display of the server and exposes them via HTTP.
+Java app that can capture the screen of the current machine and exposes them via HTTP.
 
 ## Build 
 ```

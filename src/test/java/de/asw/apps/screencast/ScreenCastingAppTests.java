@@ -12,7 +12,7 @@ public class ScreenCastingAppTests {
 	static {
 		System.setProperty("java.awt.headless", "false");
 	}
-	
+
 	@Test
 	public void contextLoads() {
 	}

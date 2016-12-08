@@ -1,0 +1,70 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>Screenshooter</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<script src="/webjars/jquery/jquery.min.js"></script>
+<style type="text/css">
+#screenshot {
+ /*  display: none; */
+ 
+}
+</style>
+<script>
+   var screenshooter = {
+      showUpdates : true
+   };
+
+   function initScreenVisibility() {
+
+      var hidden, visibilityChange;
+      if (typeof document.hidden !== "undefined") { // Opera 12.10 and Firefox 18 and later support 
+         hidden = "hidden";
+         visibilityChange = "visibilitychange";
+      } else if (typeof document.msHidden !== "undefined") {
+         hidden = "msHidden";
+         visibilityChange = "msvisibilitychange";
+      } else if (typeof document.webkitHidden !== "undefined") {
+         hidden = "webkitHidden";
+         visibilityChange = "webkitvisibilitychange";
+      }
+
+      function handleVisibilityChange() {
+
+         if (document[hidden]) {
+            document.title = "Paused...";
+            console.log("stop updating");
+            screenshooter.showUpdates = false;
+         } else {
+            document.title = "Active...";
+            console.log("start updating");
+            screenshooter.showUpdates = true;
+         }
+      }
+
+      document.addEventListener(visibilityChange, handleVisibilityChange, false);
+   }
+
+   function initScreenShooter() {
+
+      initScreenVisibility();
+
+      screenshooter.$screenshotImage = $("#screenshot");
+
+      function refreshImage() {
+         if (screenshooter.showUpdates) {
+            console.log("screen update");
+            screenshooter.$screenshotImage.attr("src", "/screenshot?" + Date.now());
+         }
+      }
+
+      setInterval(refreshImage, 500);
+   }
+
+   $(document).ready(initScreenShooter);
+</script>
+</head>
+<body>
+ <img id="screenshot" src="/screenshot" alt="Screenshot" />
+</body>
+</html>

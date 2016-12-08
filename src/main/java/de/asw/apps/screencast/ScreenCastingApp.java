@@ -1,6 +1,5 @@
 package de.asw.apps.screencast;
 
-import java.net.Inet4Address;
 import java.net.InetAddress;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -25,9 +24,11 @@ public class ScreenCastingApp {
 	}
 
 	@EventListener
-	public void run(ApplicationReadyEvent are) throws Exception{
+	public void run(ApplicationReadyEvent are) throws Exception {
 
 		String hostName = InetAddress.getLocalHost().getHostName();
-		System.out.printf("ScreenCasting running under: http://%s:%s/%n", hostName, serverPort);
+		System.out.println("########################################################>");
+		System.out.printf("####### ScreenCasting running under: http://%s:%s/%n", hostName, serverPort);
+		System.out.println("########################################################>");
 	}
 }

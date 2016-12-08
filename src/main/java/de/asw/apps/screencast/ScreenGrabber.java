@@ -6,12 +6,11 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
 import java.awt.Robot;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 
 import javax.imageio.ImageIO;
 
 import org.springframework.stereotype.Component;
-
-import de.asw.apps.screencast.support.FastByteArrayOutputStream;
 
 @Component
 class ScreenGrabber {
@@ -42,7 +41,7 @@ class ScreenGrabber {
 
 	public byte[] grabAsBytes() {
 
-		FastByteArrayOutputStream baos = new FastByteArrayOutputStream(1024 * 400);
+		ByteArrayOutputStream baos = new ByteArrayOutputStream(1024 * 400);
 		try {
 			ImageIO.write(grab(), "jpg", baos);
 		} catch (Exception e) {

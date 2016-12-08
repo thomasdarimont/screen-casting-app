@@ -1,5 +1,5 @@
 # Screen Casting App
-Java app that can capture the screen of the current machine and exposes them via HTTP.
+Java app that captures screenshots of the current machine and exposes them via HTTP.
 
 ## Build 
 ```

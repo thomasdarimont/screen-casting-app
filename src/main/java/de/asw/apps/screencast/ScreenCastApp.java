@@ -11,7 +11,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 @EnableScheduling
 @SpringBootApplication
-public class ScreenCastingApp {
+public class ScreenCastApp {
 
 	@Value("${server.port}")
 	String serverPort;
@@ -20,7 +20,7 @@ public class ScreenCastingApp {
 
 		System.setProperty("java.awt.headless", "false");
 
-		SpringApplication.run(ScreenCastingApp.class, args);
+		SpringApplication.run(ScreenCastApp.class, args);
 	}
 
 	@EventListener

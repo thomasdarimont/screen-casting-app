@@ -128,17 +128,15 @@
 
                     case screenshooter.RESIZE_MODE_FIT_HEIGHT:
                         //Image centering (if possible)
-                        //For some reason directly executing this will return the size of the image before the resize.
-                        //Waiting one ms before executing this code fixes that issue
-                        setTimeout(function () {
-                            var width = screenElem.clientWidth;
-                            var windowWidth = $(window).width();
-                            var offset = windowWidth - width;
+                        //This uses the scaling factor (height) and calculates the image size
+                        //This is done because screenElem.clientWidth will return the "old" value from before the resize
+                        var width = calculateNewImageSize(calculateDisplaySizingFactor()[1]*100)[0];
+                        var windowWidth = $(window).width();
+                        var offset = windowWidth - width;
 
-                            if (offset > 0) {
-                                screenElem.style.left = (offset / 2) + "px";
-                            }
-                        }, 1);
+                        if (offset > 0) {
+                            screenElem.style.left = (offset / 2) + "px";
+                        }
 
                         screenElem.style.height = "100%";
                         screenElem.style.width = "initial";
@@ -146,16 +144,14 @@
 
                     case screenshooter.RESIZE_MODE_FIT_WIDTH:
                         //Image centering (if possible)
-                        //For some reason directly executing this will return the size of the image before the resize.
-                        //Waiting one ms before executing this code fixes that issue
-                        setTimeout(function () {
-                            var height = screenElem.clientHeight;
-                            var windowHeight = $(window).height();
-                            var offset = windowHeight - height;
-                            if (offset > 0) {
-                                screenElem.style.top = (offset / 2) + "px";
-                            }
-                        }, 1);
+                        //This uses the scaling factor (width) and calculates the image size
+                        //This is done because screenElem.clientWidth will return the "old" value from before the resize
+                        var height = calculateNewImageSize(calculateDisplaySizingFactor()[0]*100)[1];
+                        var windowHeight = $(window).height();
+                        var offset = windowHeight - height;
+                        if (offset > 0) {
+                            screenElem.style.top = (offset / 2) + "px";
+                        }
 
                         screenElem.style.height = "initial";
                         screenElem.style.width = "100%";

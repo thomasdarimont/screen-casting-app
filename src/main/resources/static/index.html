@@ -1,70 +1,198 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-<title>Screenshooter</title>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<script src="/webjars/jquery/jquery.min.js"></script>
-<style type="text/css">
-#screenshot {
- /*  display: none; */
- 
-}
-</style>
-<script>
-   var screenshooter = {
-      showUpdates : true
-   };
+    <title>Screenshooter</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <script src="/webjars/jquery/jquery.min.js"></script>
+    <style type="text/css">
+        #screenshot {
+            /*  display: none; */
+            /* User cannot mark the image anymore */
+            -moz-user-select: none;
+            -webkit-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -o-user-select: none;
+        }
 
-   function initScreenVisibility() {
+        html, body { /* Removes unnecessary borders */
+            margin: 0px;
+            padding: 0px;
+            background-color: #000;
+        }
+    </style>
+    <script>
+        var screenshooter = {
+            showUpdates: true,
+            RESIZE_MODE_AUTOFIT: 0,
+            RESIZE_MODE_FIT_WIDTH: 1,
+            RESIZE_MODE_FIT_HEIGHT: 2,
+            RESIZE_MODE_ORIGINAL_SIZE: 3
+        };
 
-      var hidden, visibilityChange;
-      if (typeof document.hidden !== "undefined") { // Opera 12.10 and Firefox 18 and later support 
-         hidden = "hidden";
-         visibilityChange = "visibilitychange";
-      } else if (typeof document.msHidden !== "undefined") {
-         hidden = "msHidden";
-         visibilityChange = "msvisibilitychange";
-      } else if (typeof document.webkitHidden !== "undefined") {
-         hidden = "webkitHidden";
-         visibilityChange = "webkitvisibilitychange";
-      }
+        function initScreenVisibility() {
 
-      function handleVisibilityChange() {
+            var hidden, visibilityChange;
+            if (typeof document.hidden !== "undefined") { // Opera 12.10 and Firefox 18 and later support
+                hidden = "hidden";
+                visibilityChange = "visibilitychange";
+            } else if (typeof document.msHidden !== "undefined") {
+                hidden = "msHidden";
+                visibilityChange = "msvisibilitychange";
+            } else if (typeof document.webkitHidden !== "undefined") {
+                hidden = "webkitHidden";
+                visibilityChange = "webkitvisibilitychange";
+            }
 
-         if (document[hidden]) {
-            document.title = "Paused...";
-            console.log("stop updating");
-            screenshooter.showUpdates = false;
-         } else {
-            document.title = "Active...";
-            console.log("start updating");
-            screenshooter.showUpdates = true;
-         }
-      }
+            function handleVisibilityChange() {
 
-      document.addEventListener(visibilityChange, handleVisibilityChange, false);
-   }
+                if (document[hidden]) {
+                    document.title = "Paused...";
+                    console.log("stop updating");
+                    screenshooter.showUpdates = false;
+                } else {
+                    document.title = "Active...";
+                    console.log("start updating");
+                    screenshooter.showUpdates = true;
+                }
+            }
 
-   function initScreenShooter() {
+            document.addEventListener(visibilityChange, handleVisibilityChange, false);
+        }
 
-      initScreenVisibility();
+        function initResizeTools() {
+            var currentResizeMode = screenshooter.RESIZE_MODE_ORIGINAL_SIZE;
+            window.onresize = function () {
+                if (currentResizeMode != screenshooter.RESIZE_MODE_ORIGINAL_SIZE) {
+                    resizeImage(currentResizeMode);
+                }
+            };
 
-      screenshooter.$screenshotImage = $("#screenshot");
+            /**
+             * This function will calculate which scaling factor would be needed to make the image fit the display width/height
+             * @return Array containing the scaling factors for width [0] and height [1]
+             */
+            function calculateDisplaySizingFactor() {
+                var imageWidth = screenshooter.$screenshotImage[0].naturalWidth;
+                var imageHeight = screenshooter.$screenshotImage[0].naturalHeight;
+                var windowWidth = $(window).width();
+                var windowHeight = $(window).height();
 
-      function refreshImage() {
-         if (screenshooter.showUpdates) {
-            console.log("screen update");
-            screenshooter.$screenshotImage.attr("src", "/screenshot?" + Date.now());
-         }
-      }
+                return [(windowWidth / imageWidth), (windowHeight / imageHeight)];
+            }
 
-      setInterval(refreshImage, 500);
-   }
+            /**
+             * This function will try to calculate the new size of on image
+             * @param scaleValue The percentage-value of the scaling (e.g. 150 for 150% of original size)
+             * @return Array with the width [0] and height [1]
+             */
+            function calculateNewImageSize(scaleValue) {
+                var actualWidth = screenshooter.$screenshotImage[0].naturalWidth;
+                var actualHeight = screenshooter.$screenshotImage[0].naturalHeight;
+                var actualScaleValue = scaleValue / 100;
 
-   $(document).ready(initScreenShooter);
-</script>
+                return [(actualWidth * actualScaleValue), (actualHeight * actualScaleValue)];
+            }
+
+            /**
+             * Resizes the image using the given mode.
+             * Modes can be found in the screenshooter-object and start with "RESIZE_MODE_"
+             * @param resizeMode Resize mode to use
+             */
+            function resizeImage(resizeMode) {
+                console.log("resizeImage: " + resizeMode);
+                var screenElem = screenshooter.$screenshotImage[0];
+
+                if (resizeMode != screenshooter.RESIZE_MODE_ORIGINAL_SIZE) {
+                    screenElem.style.position = "absolute";
+                    screenElem.style.top = "0px";
+                    screenElem.style.left = "0px";
+                } else {
+                    screenElem.style.position = "initial";
+                    screenElem.style.top = "initial";
+                    screenElem.style.left = "initial";
+                    screenElem.style.height = "initial";
+                    screenElem.style.width = "initial";
+                }
+
+                switch (resizeMode) {
+                    case screenshooter.RESIZE_MODE_AUTOFIT:
+                        var neededScaling = calculateDisplaySizingFactor();
+                        //Checks whether the width or height scaling is smaller and selects the smallest scaling option
+                        if (neededScaling[0] < neededScaling[1]) {
+                            resizeImage(screenshooter.RESIZE_MODE_FIT_WIDTH);
+                        } else {
+                            resizeImage(screenshooter.RESIZE_MODE_FIT_HEIGHT);
+                        }
+                        break;
+
+                    case screenshooter.RESIZE_MODE_FIT_HEIGHT:
+                        //Image centering (if possible)
+                        //This uses the scaling factor (height) and calculates the image size
+                        //This is done because screenElem.clientWidth will return the "old" value from before the resize
+                        var width = calculateNewImageSize(calculateDisplaySizingFactor()[1]*100)[0];
+                        var windowWidth = $(window).width();
+                        var offset = windowWidth - width;
+
+                        if (offset > 0) {
+                            screenElem.style.left = (offset / 2) + "px";
+                        }
+
+                        screenElem.style.height = "100%";
+                        screenElem.style.width = "initial";
+                        break;
+
+                    case screenshooter.RESIZE_MODE_FIT_WIDTH:
+                        //Image centering (if possible)
+                        //This uses the scaling factor (width) and calculates the image size
+                        //This is done because screenElem.clientWidth will return the "old" value from before the resize
+                        var height = calculateNewImageSize(calculateDisplaySizingFactor()[0]*100)[1];
+                        var windowHeight = $(window).height();
+                        var offset = windowHeight - height;
+                        if (offset > 0) {
+                            screenElem.style.top = (offset / 2) + "px";
+                        }
+
+                        screenElem.style.height = "initial";
+                        screenElem.style.width = "100%";
+                        break;
+                }
+            }
+
+            screenshooter.$screenshotImage[0].onclick = function () {
+                var nextMode = -1;
+                if (currentResizeMode == screenshooter.RESIZE_MODE_ORIGINAL_SIZE) {
+                    nextMode = screenshooter.RESIZE_MODE_AUTOFIT;
+                } else {
+                    nextMode = screenshooter.RESIZE_MODE_ORIGINAL_SIZE;
+                }
+                resizeImage(nextMode);
+                currentResizeMode = nextMode;
+            }
+        }
+
+        function initScreenShooter() {
+
+            initScreenVisibility();
+
+            screenshooter.$screenshotImage = $("#screenshot");
+
+            initResizeTools();
+
+            function refreshImage() {
+                if (screenshooter.showUpdates) {
+                    console.log("screen update");
+                    screenshooter.$screenshotImage.attr("src", "/screenshot?" + Date.now());
+                }
+            }
+
+            setInterval(refreshImage, 500);
+        }
+
+        $(document).ready(initScreenShooter);
+    </script>
 </head>
 <body>
- <img id="screenshot" src="/screenshot" alt="Screenshot" />
+<img id="screenshot" src="/screenshot" alt="Screenshot" unselectable="on" onselectstart="return false;"/>
 </body>
 </html>

@@ -3,14 +3,18 @@
 <head>
 <title>Screenshooter</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<script src="/webjars/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="/webjars/jquery/jquery.min.js"></script>
 <style type="text/css">
 #screenshot {
  /*  display: none; */
  
 }
 </style>
-<script>
+</head>
+<body>
+ <img id="screenshot" src="/screenshot" alt="Screenshot" />
+ 
+ <script type="text/javascript">
    var screenshooter = {
       showUpdates : true
    };
@@ -63,8 +67,6 @@
 
    $(document).ready(initScreenShooter);
 </script>
-</head>
-<body>
- <img id="screenshot" src="/screenshot" alt="Screenshot" />
+ 
 </body>
 </html>

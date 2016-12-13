@@ -9,12 +9,10 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootTest
 public class ScreenCastingAppTests {
 
-	static {
-		System.setProperty("java.awt.headless", "false");
-	}
+  static {
+    System.setProperty("java.awt.headless", "false");
+  }
 
-	@Test
-	public void contextLoads() {
-	}
-
+  @Test
+  public void contextLoads() {}
 }

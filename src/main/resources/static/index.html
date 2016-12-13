@@ -1,216 +1,216 @@
 <!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org">
+<html>
 <head>
-    <title>Screencast</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <script src="/webjars/jquery/jquery.min.js"></script>
-    <style type="text/css">
-        #screenshot {
-            /*  display: none; */
-            /* User cannot mark the image anymore */
-            -moz-user-select: none;
-            -webkit-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-            -o-user-select: none;
+  <title>Screencast</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <script src="/webjars/jquery/jquery.min.js"></script>
+  <style type="text/css">
+    #screenshot {
+      /*  display: none; */
+      /* User cannot mark the image anymore */
+      -moz-user-select: none;
+      -webkit-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+      -o-user-select: none;
+    }
+
+    html, body { /* Removes unnecessary borders */
+      margin: 0;
+      padding: 0;
+      background-color: #000;
+    }
+  </style>
+  <script>
+    function initScreenVisibilityHandling() {
+
+      var hiddenAttributeName, visibilityChangeEventName;
+      if (typeof document.hidden !== "undefined") { // Opera 12.10 and Firefox 18 and later support
+        hiddenAttributeName = "hidden";
+        visibilityChangeEventName = "visibilitychange";
+      } else if (typeof document.msHidden !== "undefined") {
+        hiddenAttributeName = "msHidden";
+        visibilityChangeEventName = "msvisibilitychange";
+      } else if (typeof document.webkitHidden !== "undefined") {
+        hiddenAttributeName = "webkitHidden";
+        visibilityChangeEventName = "webkitvisibilitychange";
+      } else {
+        // step out, since some older browsers don't support handling of visibility changes.
+        return;
+      }
+
+      function handleVisibilityChange() {
+
+        if (document[hiddenAttributeName]) {
+          document.title = "Paused...";
+          console.log("stop updating");
+          screenCaster.showUpdates = false;
+        } else {
+          document.title = "Active...";
+          console.log("start updating");
+          screenCaster.showUpdates = true;
+        }
+      }
+
+      document.addEventListener(visibilityChangeEventName, handleVisibilityChange, false);
+    }
+
+    function initResizeTools(screenCaster) {
+
+      var currentResizeMode = screenCaster.RESIZE_MODE_ORIGINAL_SIZE;
+      window.onresize = function () {
+        if (currentResizeMode != screenCaster.RESIZE_MODE_ORIGINAL_SIZE) {
+          resizeImage(currentResizeMode);
+        }
+      };
+
+      /**
+       * This function will calculate which scaling factor would be needed to make the image fit the display width/height
+       * @return Array containing the scaling factors for width [0] and height [1]
+       */
+      function calculateDisplaySizingFactor() {
+        var imageWidth = screenCaster.$screenImage.naturalWidth;
+        var imageHeight = screenCaster.$screenImage.naturalHeight;
+        var windowWidth = $(window).width();
+        var windowHeight = $(window).height();
+
+        return [(windowWidth / imageWidth), (windowHeight / imageHeight)];
+      }
+
+      /**
+       * This function will try to calculate the new size of on image
+       * @param scaleValue The percentage-value of the scaling (e.g. 150 for 150% of original size)
+       * @return Array with the width [0] and height [1]
+       */
+      function calculateNewImageSize(scaleValue) {
+        var actualWidth = screenCaster.$screenImage.naturalWidth;
+        var actualHeight = screenCaster.$screenImage.naturalHeight;
+        var actualScaleValue = scaleValue / 100;
+
+        return [(actualWidth * actualScaleValue), (actualHeight * actualScaleValue)];
+      }
+
+      /**
+       * Resizes the image using the given mode.
+       * Modes can be found in the screenCaster-object and start with "RESIZE_MODE_"
+       * @param resizeMode Resize mode to use
+       */
+      function resizeImage(resizeMode) {
+        console.log("resizeImage: " + resizeMode);
+        var screenElem = screenCaster.$screenImage;
+
+        if (resizeMode != screenCaster.RESIZE_MODE_ORIGINAL_SIZE) {
+          screenElem.style.position = "absolute";
+          screenElem.style.top = "0px";
+          screenElem.style.left = "0px";
+        } else {
+          screenElem.style.position = "initial";
+          screenElem.style.top = "initial";
+          screenElem.style.left = "initial";
+          screenElem.style.height = "initial";
+          screenElem.style.width = "initial";
         }
 
-        html, body { /* Removes unnecessary borders */
-            margin: 0;
-            padding: 0;
-            background-color: #000;
-        }
-    </style>
-    <script>
-        function initScreenVisibilityHandling() {
-
-            var hiddenAttributeName, visibilityChangeEventName;
-            if (typeof document.hidden !== "undefined") { // Opera 12.10 and Firefox 18 and later support
-                hiddenAttributeName = "hidden";
-                visibilityChangeEventName = "visibilitychange";
-            } else if (typeof document.msHidden !== "undefined") {
-                hiddenAttributeName = "msHidden";
-                visibilityChangeEventName = "msvisibilitychange";
-            } else if (typeof document.webkitHidden !== "undefined") {
-                hiddenAttributeName = "webkitHidden";
-                visibilityChangeEventName = "webkitvisibilitychange";
+        switch (resizeMode) {
+          case screenCaster.RESIZE_MODE_AUTOFIT:
+            var neededScaling = calculateDisplaySizingFactor();
+            //Checks whether the width or height scaling is smaller and selects the smallest scaling option
+            if (neededScaling[0] < neededScaling[1]) {
+              resizeImage(screenCaster.RESIZE_MODE_FIT_WIDTH);
             } else {
-                // step out, since some older browsers don't support handling of visibility changes.
-                return;
+              resizeImage(screenCaster.RESIZE_MODE_FIT_HEIGHT);
+            }
+            break;
+
+          case screenCaster.RESIZE_MODE_FIT_HEIGHT:
+            //Image centering (if possible)
+            //This uses the scaling factor (height) and calculates the image size
+            //This is done because screenElem.clientWidth will return the "old" value from before the resize
+            var width = calculateNewImageSize(calculateDisplaySizingFactor()[1] * 100)[0];
+            var windowWidth = $(window).width();
+            var offset = windowWidth - width;
+
+            if (offset > 0) {
+              screenElem.style.left = (offset / 2) + "px";
             }
 
-            function handleVisibilityChange() {
+            screenElem.style.height = "100%";
+            screenElem.style.width = "initial";
+            break;
 
-                if (document[hiddenAttributeName]) {
-                    document.title = "Paused...";
-                    console.log("stop updating");
-                    screenCaster.showUpdates = false;
-                } else {
-                    document.title = "Active...";
-                    console.log("start updating");
-                    screenCaster.showUpdates = true;
-                }
+          case screenCaster.RESIZE_MODE_FIT_WIDTH:
+            //Image centering (if possible)
+            //This uses the scaling factor (width) and calculates the image size
+            //This is done because screenElem.clientWidth will return the "old" value from before the resize
+            var height = calculateNewImageSize(calculateDisplaySizingFactor()[0] * 100)[1];
+            var windowHeight = $(window).height();
+            var offset = windowHeight - height;
+            if (offset > 0) {
+              screenElem.style.top = (offset / 2) + "px";
             }
 
-            document.addEventListener(visibilityChangeEventName, handleVisibilityChange, false);
+            screenElem.style.height = "initial";
+            screenElem.style.width = "100%";
+            break;
+        }
+      }
+
+      function toggleResizeMode() {
+
+        var nextMode = -1;
+        if (currentResizeMode == screenCaster.RESIZE_MODE_ORIGINAL_SIZE) {
+          nextMode = screenCaster.RESIZE_MODE_AUTOFIT;
+        } else {
+          nextMode = screenCaster.RESIZE_MODE_ORIGINAL_SIZE;
+        }
+        resizeImage(nextMode);
+        currentResizeMode = nextMode;
+      }
+
+      screenCaster.$screenImage.onclick = function () {
+        toggleResizeMode();
+      };
+    }
+
+    function createScreenCaster() {
+      return {
+        showUpdates: true,
+        $screenImage: $("#screenshot")[0],
+        RESIZE_MODE_AUTOFIT: 0,
+        RESIZE_MODE_FIT_WIDTH: 1,
+        RESIZE_MODE_FIT_HEIGHT: 2,
+        RESIZE_MODE_ORIGINAL_SIZE: 3
+      };
+    }
+
+    function startScreenCast(screenCaster) {
+
+      function refreshImage() {
+
+        if (!screenCaster.showUpdates) {
+          return;
         }
 
-        function initResizeTools(screenCaster) {
+        console.log("screen update");
+        screenCaster.$screenImage.src = "/screenshot?" + Date.now();
+      }
 
-            var currentResizeMode = screenCaster.RESIZE_MODE_ORIGINAL_SIZE;
-            window.onresize = function () {
-                if (currentResizeMode != screenCaster.RESIZE_MODE_ORIGINAL_SIZE) {
-                    resizeImage(currentResizeMode);
-                }
-            };
+      setInterval(refreshImage, 500);
+    }
 
-            /**
-             * This function will calculate which scaling factor would be needed to make the image fit the display width/height
-             * @return Array containing the scaling factors for width [0] and height [1]
-             */
-            function calculateDisplaySizingFactor() {
-                var imageWidth = screenCaster.$screenImage.naturalWidth;
-                var imageHeight = screenCaster.$screenImage.naturalHeight;
-                var windowWidth = $(window).width();
-                var windowHeight = $(window).height();
+    function initScreenCaster() {
 
-                return [(windowWidth / imageWidth), (windowHeight / imageHeight)];
-            }
+      initScreenVisibilityHandling();
 
-            /**
-             * This function will try to calculate the new size of on image
-             * @param scaleValue The percentage-value of the scaling (e.g. 150 for 150% of original size)
-             * @return Array with the width [0] and height [1]
-             */
-            function calculateNewImageSize(scaleValue) {
-                var actualWidth = screenCaster.$screenImage.naturalWidth;
-                var actualHeight = screenCaster.$screenImage.naturalHeight;
-                var actualScaleValue = scaleValue / 100;
+      var screenCaster = createScreenCaster();
 
-                return [(actualWidth * actualScaleValue), (actualHeight * actualScaleValue)];
-            }
+      initResizeTools(screenCaster);
 
-            /**
-             * Resizes the image using the given mode.
-             * Modes can be found in the screenCaster-object and start with "RESIZE_MODE_"
-             * @param resizeMode Resize mode to use
-             */
-            function resizeImage(resizeMode) {
-                console.log("resizeImage: " + resizeMode);
-                var screenElem = screenCaster.$screenImage;
+      startScreenCast(screenCaster);
+    }
 
-                if (resizeMode != screenCaster.RESIZE_MODE_ORIGINAL_SIZE) {
-                    screenElem.style.position = "absolute";
-                    screenElem.style.top = "0px";
-                    screenElem.style.left = "0px";
-                } else {
-                    screenElem.style.position = "initial";
-                    screenElem.style.top = "initial";
-                    screenElem.style.left = "initial";
-                    screenElem.style.height = "initial";
-                    screenElem.style.width = "initial";
-                }
-
-                switch (resizeMode) {
-                    case screenCaster.RESIZE_MODE_AUTOFIT:
-                        var neededScaling = calculateDisplaySizingFactor();
-                        //Checks whether the width or height scaling is smaller and selects the smallest scaling option
-                        if (neededScaling[0] < neededScaling[1]) {
-                            resizeImage(screenCaster.RESIZE_MODE_FIT_WIDTH);
-                        } else {
-                            resizeImage(screenCaster.RESIZE_MODE_FIT_HEIGHT);
-                        }
-                        break;
-
-                    case screenCaster.RESIZE_MODE_FIT_HEIGHT:
-                        //Image centering (if possible)
-                        //This uses the scaling factor (height) and calculates the image size
-                        //This is done because screenElem.clientWidth will return the "old" value from before the resize
-                        var width = calculateNewImageSize(calculateDisplaySizingFactor()[1]*100)[0];
-                        var windowWidth = $(window).width();
-                        var offset = windowWidth - width;
-
-                        if (offset > 0) {
-                            screenElem.style.left = (offset / 2) + "px";
-                        }
-
-                        screenElem.style.height = "100%";
-                        screenElem.style.width = "initial";
-                        break;
-
-                    case screenCaster.RESIZE_MODE_FIT_WIDTH:
-                        //Image centering (if possible)
-                        //This uses the scaling factor (width) and calculates the image size
-                        //This is done because screenElem.clientWidth will return the "old" value from before the resize
-                        var height = calculateNewImageSize(calculateDisplaySizingFactor()[0]*100)[1];
-                        var windowHeight = $(window).height();
-                        var offset = windowHeight - height;
-                        if (offset > 0) {
-                            screenElem.style.top = (offset / 2) + "px";
-                        }
-
-                        screenElem.style.height = "initial";
-                        screenElem.style.width = "100%";
-                        break;
-                }
-            }
-
-            function toggleResizeMode(){
-
-                var nextMode = -1;
-                if (currentResizeMode == screenCaster.RESIZE_MODE_ORIGINAL_SIZE) {
-                    nextMode = screenCaster.RESIZE_MODE_AUTOFIT;
-                } else {
-                    nextMode = screenCaster.RESIZE_MODE_ORIGINAL_SIZE;
-                }
-                resizeImage(nextMode);
-                currentResizeMode = nextMode;
-            }
-
-            screenCaster.$screenImage.onclick = function () {
-                toggleResizeMode();
-            };
-        }
-
-        function createScreenCaster(){
-            return {
-                showUpdates: true,
-                $screenImage: $("#screenshot")[0],
-                RESIZE_MODE_AUTOFIT: 0,
-                RESIZE_MODE_FIT_WIDTH: 1,
-                RESIZE_MODE_FIT_HEIGHT: 2,
-                RESIZE_MODE_ORIGINAL_SIZE: 3
-            };
-        }
-
-        function startScreenCast(screenCaster){
-
-            function refreshImage() {
-
-                if (!screenCaster.showUpdates) {
-                    return;
-                }
-
-                console.log("screen update");
-                screenCaster.$screenImage.src="/screenshot?" + Date.now();
-            }
-
-            setInterval(refreshImage, 500);
-        }
-
-        function initScreenCaster() {
-
-            initScreenVisibilityHandling();
-
-            var screenCaster = createScreenCaster();
-
-            initResizeTools(screenCaster);
-
-            startScreenCast(screenCaster);
-        }
-
-        $(document).ready(initScreenCaster);
-    </script>
+    $(document).ready(initScreenCaster);
+  </script>
 </head>
 <body>
 <img id="screenshot" src="/screenshot" alt="Screenshot" unselectable="on" onselectstart="return false;"/>

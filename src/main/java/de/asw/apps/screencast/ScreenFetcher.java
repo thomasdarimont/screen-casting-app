@@ -1,26 +1,25 @@
 package de.asw.apps.screencast;
 
-import java.util.concurrent.atomic.AtomicReference;
-
+import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import lombok.RequiredArgsConstructor;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Component
 @RequiredArgsConstructor
 class ScreenFetcher {
 
-	private final ScreenGrabber screenGrabber;
+  private final ScreenGrabber screenGrabber;
 
-	private final AtomicReference<byte[]> currentImage = new AtomicReference<>();
+  private final AtomicReference<byte[]> currentImage = new AtomicReference<>();
 
-	@Scheduled(fixedDelayString = "#{${screencast.refreshIntervalMillis:-1}}")
-	void updateImage() {
-		currentImage.set(screenGrabber.grabAsBytes());
-	}
+  @Scheduled(fixedDelayString = "#{${screencast.refreshIntervalMillis:-1}}")
+  void updateImage() {
+    currentImage.set(screenGrabber.grabAsBytes());
+  }
 
-	byte[] getCurrentImage() {
-		return currentImage.get();
-	}
+  byte[] getCurrentImage() {
+    return currentImage.get();
+  }
 }

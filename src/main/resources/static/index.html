@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Screenshooter</title>
+    <title>Screencast</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <script src="/webjars/jquery/jquery.min.js"></script>
     <style type="text/css">
@@ -16,54 +16,50 @@
         }
 
         html, body { /* Removes unnecessary borders */
-            margin: 0px;
-            padding: 0px;
+            margin: 0;
+            padding: 0;
             background-color: #000;
         }
     </style>
     <script>
-        var screenshooter = {
-            showUpdates: true,
-            RESIZE_MODE_AUTOFIT: 0,
-            RESIZE_MODE_FIT_WIDTH: 1,
-            RESIZE_MODE_FIT_HEIGHT: 2,
-            RESIZE_MODE_ORIGINAL_SIZE: 3
-        };
+        function initScreenVisibilityHandling() {
 
-        function initScreenVisibility() {
-
-            var hidden, visibilityChange;
+            var hiddenAttributeName, visibilityChangeEventName;
             if (typeof document.hidden !== "undefined") { // Opera 12.10 and Firefox 18 and later support
-                hidden = "hidden";
-                visibilityChange = "visibilitychange";
+                hiddenAttributeName = "hidden";
+                visibilityChangeEventName = "visibilitychange";
             } else if (typeof document.msHidden !== "undefined") {
-                hidden = "msHidden";
-                visibilityChange = "msvisibilitychange";
+                hiddenAttributeName = "msHidden";
+                visibilityChangeEventName = "msvisibilitychange";
             } else if (typeof document.webkitHidden !== "undefined") {
-                hidden = "webkitHidden";
-                visibilityChange = "webkitvisibilitychange";
+                hiddenAttributeName = "webkitHidden";
+                visibilityChangeEventName = "webkitvisibilitychange";
+            } else {
+                // step out, since some older browsers don't support handling of visibility changes.
+                return;
             }
 
             function handleVisibilityChange() {
 
-                if (document[hidden]) {
+                if (document[hiddenAttributeName]) {
                     document.title = "Paused...";
                     console.log("stop updating");
-                    screenshooter.showUpdates = false;
+                    screenCaster.showUpdates = false;
                 } else {
                     document.title = "Active...";
                     console.log("start updating");
-                    screenshooter.showUpdates = true;
+                    screenCaster.showUpdates = true;
                 }
             }
 
-            document.addEventListener(visibilityChange, handleVisibilityChange, false);
+            document.addEventListener(visibilityChangeEventName, handleVisibilityChange, false);
         }
 
-        function initResizeTools() {
-            var currentResizeMode = screenshooter.RESIZE_MODE_ORIGINAL_SIZE;
+        function initResizeTools(screenCaster) {
+
+            var currentResizeMode = screenCaster.RESIZE_MODE_ORIGINAL_SIZE;
             window.onresize = function () {
-                if (currentResizeMode != screenshooter.RESIZE_MODE_ORIGINAL_SIZE) {
+                if (currentResizeMode != screenCaster.RESIZE_MODE_ORIGINAL_SIZE) {
                     resizeImage(currentResizeMode);
                 }
             };
@@ -73,8 +69,8 @@
              * @return Array containing the scaling factors for width [0] and height [1]
              */
             function calculateDisplaySizingFactor() {
-                var imageWidth = screenshooter.$screenshotImage[0].naturalWidth;
-                var imageHeight = screenshooter.$screenshotImage[0].naturalHeight;
+                var imageWidth = screenCaster.$screenImage.naturalWidth;
+                var imageHeight = screenCaster.$screenImage.naturalHeight;
                 var windowWidth = $(window).width();
                 var windowHeight = $(window).height();
 
@@ -87,8 +83,8 @@
              * @return Array with the width [0] and height [1]
              */
             function calculateNewImageSize(scaleValue) {
-                var actualWidth = screenshooter.$screenshotImage[0].naturalWidth;
-                var actualHeight = screenshooter.$screenshotImage[0].naturalHeight;
+                var actualWidth = screenCaster.$screenImage.naturalWidth;
+                var actualHeight = screenCaster.$screenImage.naturalHeight;
                 var actualScaleValue = scaleValue / 100;
 
                 return [(actualWidth * actualScaleValue), (actualHeight * actualScaleValue)];
@@ -96,14 +92,14 @@
 
             /**
              * Resizes the image using the given mode.
-             * Modes can be found in the screenshooter-object and start with "RESIZE_MODE_"
+             * Modes can be found in the screenCaster-object and start with "RESIZE_MODE_"
              * @param resizeMode Resize mode to use
              */
             function resizeImage(resizeMode) {
                 console.log("resizeImage: " + resizeMode);
-                var screenElem = screenshooter.$screenshotImage[0];
+                var screenElem = screenCaster.$screenImage;
 
-                if (resizeMode != screenshooter.RESIZE_MODE_ORIGINAL_SIZE) {
+                if (resizeMode != screenCaster.RESIZE_MODE_ORIGINAL_SIZE) {
                     screenElem.style.position = "absolute";
                     screenElem.style.top = "0px";
                     screenElem.style.left = "0px";
@@ -116,17 +112,17 @@
                 }
 
                 switch (resizeMode) {
-                    case screenshooter.RESIZE_MODE_AUTOFIT:
+                    case screenCaster.RESIZE_MODE_AUTOFIT:
                         var neededScaling = calculateDisplaySizingFactor();
                         //Checks whether the width or height scaling is smaller and selects the smallest scaling option
                         if (neededScaling[0] < neededScaling[1]) {
-                            resizeImage(screenshooter.RESIZE_MODE_FIT_WIDTH);
+                            resizeImage(screenCaster.RESIZE_MODE_FIT_WIDTH);
                         } else {
-                            resizeImage(screenshooter.RESIZE_MODE_FIT_HEIGHT);
+                            resizeImage(screenCaster.RESIZE_MODE_FIT_HEIGHT);
                         }
                         break;
 
-                    case screenshooter.RESIZE_MODE_FIT_HEIGHT:
+                    case screenCaster.RESIZE_MODE_FIT_HEIGHT:
                         //Image centering (if possible)
                         //This uses the scaling factor (height) and calculates the image size
                         //This is done because screenElem.clientWidth will return the "old" value from before the resize
@@ -142,7 +138,7 @@
                         screenElem.style.width = "initial";
                         break;
 
-                    case screenshooter.RESIZE_MODE_FIT_WIDTH:
+                    case screenCaster.RESIZE_MODE_FIT_WIDTH:
                         //Image centering (if possible)
                         //This uses the scaling factor (width) and calculates the image size
                         //This is done because screenElem.clientWidth will return the "old" value from before the resize
@@ -159,37 +155,61 @@
                 }
             }
 
-            screenshooter.$screenshotImage[0].onclick = function () {
+            function toggleResizeMode(){
+
                 var nextMode = -1;
-                if (currentResizeMode == screenshooter.RESIZE_MODE_ORIGINAL_SIZE) {
-                    nextMode = screenshooter.RESIZE_MODE_AUTOFIT;
+                if (currentResizeMode == screenCaster.RESIZE_MODE_ORIGINAL_SIZE) {
+                    nextMode = screenCaster.RESIZE_MODE_AUTOFIT;
                 } else {
-                    nextMode = screenshooter.RESIZE_MODE_ORIGINAL_SIZE;
+                    nextMode = screenCaster.RESIZE_MODE_ORIGINAL_SIZE;
                 }
                 resizeImage(nextMode);
                 currentResizeMode = nextMode;
             }
+
+            screenCaster.$screenImage.onclick = function () {
+                toggleResizeMode();
+            };
         }
 
-        function initScreenShooter() {
+        function createScreenCaster(){
+            return {
+                showUpdates: true,
+                $screenImage: $("#screenshot")[0],
+                RESIZE_MODE_AUTOFIT: 0,
+                RESIZE_MODE_FIT_WIDTH: 1,
+                RESIZE_MODE_FIT_HEIGHT: 2,
+                RESIZE_MODE_ORIGINAL_SIZE: 3
+            };
+        }
 
-            initScreenVisibility();
-
-            screenshooter.$screenshotImage = $("#screenshot");
-
-            initResizeTools();
+        function startScreenCast(screenCaster){
 
             function refreshImage() {
-                if (screenshooter.showUpdates) {
-                    console.log("screen update");
-                    screenshooter.$screenshotImage.attr("src", "/screenshot?" + Date.now());
+
+                if (!screenCaster.showUpdates) {
+                    return;
                 }
+
+                console.log("screen update");
+                screenCaster.$screenImage.src="/screenshot?" + Date.now();
             }
 
             setInterval(refreshImage, 500);
         }
 
-        $(document).ready(initScreenShooter);
+        function initScreenCaster() {
+
+            initScreenVisibilityHandling();
+
+            var screenCaster = createScreenCaster();
+
+            initResizeTools(screenCaster);
+
+            startScreenCast(screenCaster);
+        }
+
+        $(document).ready(initScreenCaster);
     </script>
 </head>
 <body>

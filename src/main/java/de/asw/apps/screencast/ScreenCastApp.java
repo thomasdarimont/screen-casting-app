@@ -45,9 +45,8 @@ public class ScreenCastApp {
       } catch (UnknownHostException innerUhe) {
         System.err.printf("%s. Using localhost as fallback...%n", uhe.getMessage());
         System.err.println("You need to determine the hostname yourself!");
+        return "localhost";
       }
     }
-
-    return "localhost";
   }
 }

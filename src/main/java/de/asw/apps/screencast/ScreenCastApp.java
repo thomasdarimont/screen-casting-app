@@ -8,6 +8,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 @EnableScheduling
 @SpringBootApplication
@@ -26,9 +27,27 @@ public class ScreenCastApp {
   @EventListener
   public void run(ApplicationReadyEvent are) throws Exception {
 
-    String hostName = InetAddress.getLocalHost().getHostName();
+    String hostName = tryResolveHostnameWithFallbackToLocalhost();
+
     System.out.println("########################################################>");
     System.out.printf("####### ScreenCasting running under: http://%s:%s/%n", hostName, serverPort);
     System.out.println("########################################################>");
+  }
+
+  private String tryResolveHostnameWithFallbackToLocalhost() {
+
+    try {
+      return InetAddress.getLocalHost().getHostName();
+    } catch (UnknownHostException uhe) {
+      System.err.printf("%s. Trying IP based configuration...%n", uhe.getMessage());
+      try {
+        return InetAddress.getLocalHost().getHostAddress();
+      } catch (UnknownHostException innerUhe) {
+        System.err.printf("%s. Using localhost as fallback...%n", uhe.getMessage());
+        System.err.println("You need to determine the hostname yourself!");
+      }
+    }
+
+    return "localhost";
   }
 }

@@ -1,11 +1,11 @@
 <!DOCTYPE HTML>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-  <title>Screencast</title>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <title th:text="|Screencast ${name}@${machine}|">Screencast</title>
   <script src="/webjars/jquery/jquery.min.js"></script>
   <style type="text/css">
-    #screenshot {
+    #screen {
       /*  display: none; */
       /* User cannot mark the image anymore */
       -moz-user-select: none;
@@ -21,7 +21,8 @@
       background-color: #000;
     }
   </style>
-  <script>
+
+  <script type="text/javascript">
     function initScreenVisibilityHandling() {
 
       var hiddenAttributeName, visibilityChangeEventName;
@@ -96,7 +97,10 @@
        * @param resizeMode Resize mode to use
        */
       function resizeImage(resizeMode) {
+
         console.log("resizeImage: " + resizeMode);
+
+        var offset, neededScaling, windowWidth, width;
         var screenElem = screenCaster.$screenImage;
 
         if (resizeMode != screenCaster.RESIZE_MODE_ORIGINAL_SIZE) {
@@ -113,12 +117,12 @@
 
         switch (resizeMode) {
           case screenCaster.RESIZE_MODE_AUTOFIT:
-            var neededScaling = calculateDisplaySizingFactor();
+            neededScaling = calculateDisplaySizingFactor();
             //Checks whether the width or height scaling is smaller and selects the smallest scaling option
-            if (neededScaling[0] < neededScaling[1]) {
-              resizeImage(screenCaster.RESIZE_MODE_FIT_WIDTH);
-            } else {
+            if (neededScaling[0] > neededScaling[1]) {
               resizeImage(screenCaster.RESIZE_MODE_FIT_HEIGHT);
+            } else {
+              resizeImage(screenCaster.RESIZE_MODE_FIT_WIDTH);
             }
             break;
 
@@ -126,9 +130,9 @@
             //Image centering (if possible)
             //This uses the scaling factor (height) and calculates the image size
             //This is done because screenElem.clientWidth will return the "old" value from before the resize
-            var width = calculateNewImageSize(calculateDisplaySizingFactor()[1] * 100)[0];
-            var windowWidth = $(window).width();
-            var offset = windowWidth - width;
+            width = calculateNewImageSize(calculateDisplaySizingFactor()[1] * 100)[0];
+            windowWidth = $(window).width();
+            offset = windowWidth - width;
 
             if (offset > 0) {
               screenElem.style.left = (offset / 2) + "px";
@@ -142,9 +146,9 @@
             //Image centering (if possible)
             //This uses the scaling factor (width) and calculates the image size
             //This is done because screenElem.clientWidth will return the "old" value from before the resize
-            var height = calculateNewImageSize(calculateDisplaySizingFactor()[0] * 100)[1];
-            var windowHeight = $(window).height();
-            var offset = windowHeight - height;
+            height = calculateNewImageSize(calculateDisplaySizingFactor()[0] * 100)[1];
+            windowHeight = $(window).height();
+            offset = windowHeight - height;
             if (offset > 0) {
               screenElem.style.top = (offset / 2) + "px";
             }
@@ -175,7 +179,7 @@
     function createScreenCaster() {
       return {
         showUpdates: true,
-        $screenImage: $("#screenshot")[0],
+        $screenImage: $("#screen")[0],
         RESIZE_MODE_AUTOFIT: 0,
         RESIZE_MODE_FIT_WIDTH: 1,
         RESIZE_MODE_FIT_HEIGHT: 2,
@@ -213,6 +217,8 @@
   </script>
 </head>
 <body>
-<img id="screenshot" src="/screenshot" alt="Screenshot" unselectable="on" onselectstart="return false;"/>
+<div id="screenContainer">
+  <img id="screen" src="/screenshot" alt="Screenshot" unselectable="on" onselectstart="return false;"/>
+</div>
 </body>
 </html>

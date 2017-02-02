@@ -1,4 +1,4 @@
-package de.asw.apps.screencast;
+package de.tdlabs.apps.screencast;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

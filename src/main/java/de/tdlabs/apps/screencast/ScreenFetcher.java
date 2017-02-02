@@ -1,4 +1,4 @@
-package de.asw.apps.screencast;
+package de.tdlabs.apps.screencast;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;

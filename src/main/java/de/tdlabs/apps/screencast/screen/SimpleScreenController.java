@@ -1,5 +1,6 @@
-package de.tdlabs.apps.screencast;
+package de.tdlabs.apps.screencast.screen;
 
+import de.tdlabs.apps.screencast.Settings;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -8,7 +9,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 @Component
 @RequiredArgsConstructor
-class ScreenFetcher {
+class SimpleScreenController implements ScreenController {
 
   private final ScreenGrabber screenGrabber;
 
@@ -19,14 +20,14 @@ class ScreenFetcher {
   @Scheduled(fixedDelayString = "#{${screencast.refreshIntervalMillis:-1}}")
   void updateImage() {
 
-    if(!settings.isCastEnabled()){
+    if (!settings.isCastEnabled()) {
       return;
     }
 
-    currentImage.set(screenGrabber.grabAsBytes());
+    currentImage.lazySet(screenGrabber.grabAsBytes());
   }
 
-  byte[] getCurrentImage() {
+  public byte[] getLatestScreenImageBytes() {
     return currentImage.get();
   }
 }

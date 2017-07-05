@@ -1,6 +1,6 @@
 package de.tdlabs.apps.screencast.web;
 
-import de.tdlabs.apps.screencast.capture.ScreenController;
+import de.tdlabs.apps.screencast.screen.ScreenController;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;

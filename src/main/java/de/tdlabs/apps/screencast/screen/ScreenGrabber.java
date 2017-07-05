@@ -1,4 +1,4 @@
-package de.tdlabs.apps.screencast.capture;
+package de.tdlabs.apps.screencast.screen;
 
 import org.springframework.stereotype.Component;
 
@@ -8,12 +8,12 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 
 @Component
-class ScreenCapturer {
+class ScreenGrabber {
 
   private final Robot robot;
   private final Rectangle screenRect;
 
-  public ScreenCapturer() {
+  public ScreenGrabber() {
 
     GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
     DisplayMode displayMode = ge.getDefaultScreenDevice().getDisplayMode();

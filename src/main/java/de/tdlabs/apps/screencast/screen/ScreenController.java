@@ -1,4 +1,4 @@
-package de.tdlabs.apps.screencast.capture;
+package de.tdlabs.apps.screencast.screen;
 
 public interface ScreenController {
 

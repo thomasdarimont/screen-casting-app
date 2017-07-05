@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 
 @Data
 @Component
-class Settings {
+public class Settings {
 
   volatile boolean castEnabled = true;
 }

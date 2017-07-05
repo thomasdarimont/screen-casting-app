@@ -1,4 +1,4 @@
-package de.tdlabs.apps.screencast;
+package de.tdlabs.apps.screencast.web;
 
 import lombok.Data;
 import org.springframework.stereotype.Component;
@@ -7,5 +7,5 @@ import org.springframework.stereotype.Component;
 @Component
 class SettingsForm {
 
-  volatile boolean castEnabled;
+  boolean castEnabled;
 }

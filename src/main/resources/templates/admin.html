@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-  <title th:text="|Screencast ${name}@${machine}:Admin|">Screencast:Admin</title>
+  <title th:text="|Screencast:Admin@${hostname}|">Screencast:Admin</title>
   <script src="/webjars/jquery/jquery.min.js"></script>
   <script src="/webjars/bootstrap/js/bootstrap.min.js"></script>
   <link rel="stylesheet" href="/webjars/bootstrap/css/bootstrap.min.css"/>
@@ -17,7 +17,7 @@
 
       <form method="post" action="/admin/settings">
         <div class="form-group">
-          Screen cast URL: <a th:href="|http://${hostname}:9999/|" th:text="|http://${hostname}:9999/|" target="_blank">http://localhost:9999/</a>
+          Screen cast URL: <a th:href="${url}" th:text="${url}" target="_blank">http://localhost:9999/</a>
         </div>
         <div class="form-group">
           <label for="castEnabled">Cast enabled</label>

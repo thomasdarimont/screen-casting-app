@@ -12,7 +12,7 @@ import java.net.UnknownHostException;
 
 @EnableScheduling
 @SpringBootApplication
-public class ScreenCastApp {
+public class App {
 
   @Value("${server.port}")
   String serverPort;
@@ -21,7 +21,7 @@ public class ScreenCastApp {
 
     System.setProperty("java.awt.headless", "false");
 
-    SpringApplication.run(ScreenCastApp.class, args);
+    SpringApplication.run(App.class, args);
   }
 
   @EventListener

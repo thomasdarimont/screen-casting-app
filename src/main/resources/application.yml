@@ -6,3 +6,14 @@ server:
 
 screencast:
   refreshIntervalMillis: 150
+
+security:
+  user:
+    name: admin
+    password: changeme!
+  basic:
+    path: /admin/**
+
+
+
+

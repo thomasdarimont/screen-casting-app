@@ -12,10 +12,17 @@ class ScreenFetcher {
 
   private final ScreenGrabber screenGrabber;
 
+  private final Settings settings;
+
   private final AtomicReference<byte[]> currentImage = new AtomicReference<>();
 
   @Scheduled(fixedDelayString = "#{${screencast.refreshIntervalMillis:-1}}")
   void updateImage() {
+
+    if(!settings.isCastEnabled()){
+      return;
+    }
+
     currentImage.set(screenGrabber.grabAsBytes());
   }
 

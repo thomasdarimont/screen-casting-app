@@ -46,7 +46,7 @@ class ScreenGrabber {
     GraphicsDevice[] screenDevices = ge.getScreenDevices();
 
     int screenNo = screenGrabbingProperties.getScreenNo();
-    if (screenNo < 0 || screenNo > screenDevices.length) {
+    if (screenNo < 0 || screenNo >= screenDevices.length) {
       throw new IllegalArgumentException("invalid screenNo: " + screenNo);
     }
 

@@ -53,23 +53,26 @@ class ScreenGrabber {
     return screenDevices[screenNo];
   }
 
-  BufferedImage grab() {
+  byte[] grabAsBytes() {
+    return toJpegImageAsBytes(grab());
+  }
+
+  private BufferedImage grab() {
     return grab(this.screenRect);
   }
 
-  BufferedImage grab(Rectangle screenRect) {
+  private BufferedImage grab(Rectangle screenRect) {
     return robot.createScreenCapture(screenRect);
   }
 
-  byte[] grabAsBytes() {
-
+  private byte[] toJpegImageAsBytes(BufferedImage image) {
 
     ByteArrayOutputStream baos = new ByteArrayOutputStream(1024 * 400);
 
     ImageWriter jpgWriter = ImageIO.getImageWritersByFormatName("jpg").next();
     try {
       jpgWriter.setOutput(new MemoryCacheImageOutputStream(baos));
-      IIOImage outputImage = new IIOImage(grab(), null, null);
+      IIOImage outputImage = new IIOImage(image, null, null);
 
       ImageWriteParam jpgWriteParam = jpgWriter.getDefaultWriteParam();
       jpgWriteParam.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);

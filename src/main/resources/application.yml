@@ -10,7 +10,7 @@ screencast:
 security:
     user:
       name: admin
-      password: changeme
+      password: admin
     basic:
       path: /admin/**
 

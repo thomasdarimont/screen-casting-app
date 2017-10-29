@@ -30,7 +30,8 @@ public class App {
     String hostName = tryResolveHostnameWithFallbackToLocalhost();
 
     System.out.println("########################################################>");
-    System.out.printf("####### ScreenCasting running under: http://%s:%s/%n", hostName, serverPort);
+    System.out.printf("####### Screencast URL:  http://%s:%s/%n", hostName, serverPort);
+    System.out.printf("#######      Admin URL:  http://%s:%s/admin%n", hostName, serverPort);
     System.out.println("########################################################>");
   }
 

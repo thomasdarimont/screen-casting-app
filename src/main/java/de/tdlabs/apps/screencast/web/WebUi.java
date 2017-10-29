@@ -26,20 +26,21 @@ class WebUi {
     return "index";
   }
 
-  @GetMapping("/admin/ui")
+  @GetMapping("/admin")
   @PreAuthorize("#request.getRemoteAddr().equals(#request.getLocalAddr())")
   String admin(Model model, HttpServletRequest request) throws Exception {
 
     model.addAttribute("hostname", Inet4Address.getLocalHost().getHostName());
     model.addAttribute("url", "http://" + Inet4Address.getLocalHost().getHostName() + ":" + env.getProperty("server.port") + "/");
     model.addAttribute("settings", this.settings);
-    return "/admin";
+
+    return "admin";
   }
 
-  @PostMapping(path = "/admin/settings")
+  @PostMapping("/admin/settings")
   @PreAuthorize("#request.getRemoteAddr().equals(#request.getLocalAddr())")
   String updateSettings(SettingsForm settingsForm, HttpServletRequest request) {
     this.settings.setCastEnabled(settingsForm.isCastEnabled());
-    return "redirect:/admin/ui";
+    return "redirect:/admin";
   }
 }

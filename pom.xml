@@ -5,7 +5,7 @@
 
   <groupId>de.asw.apps.streaming</groupId>
   <artifactId>screen-casting-app</artifactId>
-  <version>1.1.0.BUILD-SNAPSHOT</version>
+  <version>1.1.0.Final</version>
   <packaging>jar</packaging>
 
   <name>screen-casting-app</name>

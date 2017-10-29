@@ -12,7 +12,7 @@ class WebApi {
 
   private final ScreenController screenController;
 
-  @GetMapping(path = "/screenshot", produces = MediaType.IMAGE_JPEG_VALUE)
+  @GetMapping(path = "/screenshot.jpg", produces = MediaType.IMAGE_JPEG_VALUE)
   byte[] getScreenshot() {
     return screenController.getLatestScreenImageBytes();
   }

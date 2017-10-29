@@ -5,7 +5,7 @@
 
   <groupId>de.asw.apps.streaming</groupId>
   <artifactId>screen-casting-app</artifactId>
-  <version>0.0.3.BUILD-SNAPSHOT</version>
+  <version>1.0.0.BUILD-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>screen-casting-app</name>
@@ -52,9 +52,16 @@
       </exclusions>
     </dependency>
 
+<!--
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-jetty</artifactId>
+    </dependency>
+-->
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-undertow</artifactId>
     </dependency>
 
     <dependency>
@@ -88,6 +95,12 @@
 
     <dependency>
       <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-configuration-processor</artifactId>
+      <optional>true</optional>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-test</artifactId>
       <scope>test</scope>
     </dependency>
@@ -99,6 +112,12 @@
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>3.0.2</version>
       </plugin>
     </plugins>
   </build>

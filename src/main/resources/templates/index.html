@@ -60,7 +60,7 @@
 
       var currentResizeMode = screenCaster.RESIZE_MODE_ORIGINAL_SIZE;
       window.onresize = function () {
-        if (currentResizeMode != screenCaster.RESIZE_MODE_ORIGINAL_SIZE) {
+        if (currentResizeMode !== screenCaster.RESIZE_MODE_ORIGINAL_SIZE) {
           resizeImage(currentResizeMode);
         }
       };
@@ -103,7 +103,7 @@
         var offset, neededScaling, windowWidth, width;
         var screenElem = screenCaster.$screenImage;
 
-        if (resizeMode != screenCaster.RESIZE_MODE_ORIGINAL_SIZE) {
+        if (resizeMode !== screenCaster.RESIZE_MODE_ORIGINAL_SIZE) {
           screenElem.style.position = "absolute";
           screenElem.style.top = "0px";
           screenElem.style.left = "0px";
@@ -146,8 +146,8 @@
             //Image centering (if possible)
             //This uses the scaling factor (width) and calculates the image size
             //This is done because screenElem.clientWidth will return the "old" value from before the resize
-            height = calculateNewImageSize(calculateDisplaySizingFactor()[0] * 100)[1];
-            windowHeight = $(window).height();
+            var height = calculateNewImageSize(calculateDisplaySizingFactor()[0] * 100)[1];
+            var windowHeight = $(window).height();
             offset = windowHeight - height;
             if (offset > 0) {
               screenElem.style.top = (offset / 2) + "px";
@@ -162,7 +162,7 @@
       function toggleResizeMode() {
 
         var nextMode = -1;
-        if (currentResizeMode == screenCaster.RESIZE_MODE_ORIGINAL_SIZE) {
+        if (currentResizeMode === screenCaster.RESIZE_MODE_ORIGINAL_SIZE) {
           nextMode = screenCaster.RESIZE_MODE_AUTOFIT;
         } else {
           nextMode = screenCaster.RESIZE_MODE_ORIGINAL_SIZE;
@@ -189,6 +189,10 @@
 
     function startScreenCast(screenCaster) {
 
+      screenCaster.$screenImage.onload = function() {
+        setTimeout(refreshImage, 0);
+      };
+
       function refreshImage() {
 
         if (!screenCaster.showUpdates) {
@@ -196,10 +200,11 @@
         }
 
         console.log("screen update");
-        screenCaster.$screenImage.src = "/screenshot?" + Date.now();
+
+        screenCaster.$screenImage.src = "/screenshot.jpg?" + Date.now();
       }
 
-      setInterval(refreshImage, 250);
+      setTimeout(refreshImage, 250);
     }
 
     function initScreenCaster() {

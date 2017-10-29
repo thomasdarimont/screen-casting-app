@@ -2,7 +2,7 @@ server:
   port: 9999
   compression:
     enabled: true
-    mime-types: application/json,application/xml,text/html,text/xml,text/plain,image/jpeg
+    mime-types: application/json,application/xml,text/html,text/xml,text/plain,text/css,application/javascript,image/jpeg,image/png
 
 screencast:
   refreshIntervalMillis: 150

@@ -190,7 +190,7 @@
     function startScreenCast(screenCaster) {
 
       screenCaster.$screenImage.onload = function() {
-        setTimeout(refreshImage, 0);
+        setTimeout(refreshImage, 250);
       };
 
       function refreshImage() {

@@ -1,4 +1,4 @@
-package de.tdlabs.apps.screencast;
+package de.tdlabs.apps.screencaster;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

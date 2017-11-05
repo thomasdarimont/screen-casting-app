@@ -1,4 +1,4 @@
-package de.tdlabs.apps.screencast;
+package de.tdlabs.apps.screencaster;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
@@ -11,7 +11,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 @SpringBootApplication
-@EnableConfigurationProperties(ScreenCastProperties.class)
+@EnableConfigurationProperties(ScreenCasterProperties.class)
 public class App {
 
   @Value("${server.port}")
@@ -31,7 +31,6 @@ public class App {
 
     System.out.println("########################################################>");
     System.out.printf("####### Screencast URL:  http://%s:%s/%n", hostName, serverPort);
-    System.out.printf("#######      Admin URL:  http://%s:%s/admin%n", hostName, serverPort);
     System.out.println("########################################################>");
   }
 

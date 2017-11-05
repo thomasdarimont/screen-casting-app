@@ -1,13 +1,24 @@
-package de.tdlabs.apps.screencast;
+package de.tdlabs.apps.screencaster;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @Data
-@ConfigurationProperties(prefix = "screencast")
-public class ScreenCastProperties {
+@ConfigurationProperties(prefix = "screencaster")
+public class ScreenCasterProperties {
 
   private ScreenGrabbingProperties grabbing = new ScreenGrabbingProperties();
+
+  private ScreencastProperties screencast = new ScreencastProperties();
+
+  @Data
+  public static class ScreencastProperties {
+
+    /**
+     * Controls whether screen casting should start immediately after program start. Defaults to {@literal true}.
+     */
+    private boolean autoStart = true;
+  }
 
   @Data
   public static class ScreenGrabbingProperties {

@@ -1,0 +1,61 @@
+#screen {
+  /*  display: none; */
+  /* User cannot mark the image anymore */
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -o-user-select: none;
+}
+
+html, body { /* Removes unnecessary borders */
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+#screenContainer {
+  text-align: center;
+}
+
+.screen-fit {
+  height: 100vh;
+}
+
+.modal-dialog {
+  width: 60% !important;
+  background-color: #ffffff;
+  border: 1px solid #f3f;
+}
+
+#btnShowNotes {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+}
+
+#notesListContainer {
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+.note-time {
+  color: #999;
+}
+
+.note.read span.new-note-marker {
+  visibility: hidden;
+}
+
+.note.new .new-note-marker {
+  color: #f3f;
+}
+
+ol li.list-group-item {
+  list-style: decimal inside;
+  display: list-item;
+}

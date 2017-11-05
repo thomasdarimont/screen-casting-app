@@ -1,229 +1,124 @@
 <!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:data="http://www.thymeleaf.org/extras/data">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
   <title th:text="|Screencast@${hostname}|">Screencast@localhost</title>
+
   <script src="/webjars/jquery/jquery.min.js"></script>
-  <style type="text/css">
-    #screen {
-      /*  display: none; */
-      /* User cannot mark the image anymore */
-      -moz-user-select: none;
-      -webkit-user-select: none;
-      -ms-user-select: none;
-      user-select: none;
-      -o-user-select: none;
-    }
+  <script src="/webjars/mustache/mustache.min.js"></script>
+  <script src="/webjars/sockjs-client/sockjs.min.js"></script>
+  <script src="/webjars/stomp-websocket/stomp.min.js"></script>
+  <script src="/webjars/moment/min/moment.min.js"></script>
+  <script src="/webjars/moment/locale/de.js"></script>
 
-    html, body { /* Removes unnecessary borders */
-      margin: 0;
-      padding: 0;
-      background-color: #000;
-    }
-  </style>
+  <link rel="stylesheet" href="css/app.css"/>
+  <script src="/webjars/bootstrap/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="/webjars/bootstrap/css/bootstrap.min.css"/>
 
-  <script type="text/javascript">
-    function initScreenVisibilityHandling() {
-
-      var hiddenAttributeName, visibilityChangeEventName;
-      if (typeof document.hidden !== "undefined") { // Opera 12.10 and Firefox 18 and later support
-        hiddenAttributeName = "hidden";
-        visibilityChangeEventName = "visibilitychange";
-      } else if (typeof document.msHidden !== "undefined") {
-        hiddenAttributeName = "msHidden";
-        visibilityChangeEventName = "msvisibilitychange";
-      } else if (typeof document.webkitHidden !== "undefined") {
-        hiddenAttributeName = "webkitHidden";
-        visibilityChangeEventName = "webkitvisibilitychange";
-      } else {
-        // step out, since some older browsers don't support handling of visibility changes.
-        return;
-      }
-
-      function handleVisibilityChange() {
-
-        if (document[hiddenAttributeName]) {
-          document.title = "Paused...";
-          console.log("stop updating");
-          screenCaster.showUpdates = false;
-        } else {
-          document.title = "Active...";
-          console.log("start updating");
-          screenCaster.showUpdates = true;
-        }
-      }
-
-      document.addEventListener(visibilityChangeEventName, handleVisibilityChange, false);
-    }
-
-    function initResizeTools(screenCaster) {
-
-      var currentResizeMode = screenCaster.RESIZE_MODE_ORIGINAL_SIZE;
-      window.onresize = function () {
-        if (currentResizeMode !== screenCaster.RESIZE_MODE_ORIGINAL_SIZE) {
-          resizeImage(currentResizeMode);
-        }
-      };
-
-      /**
-       * This function will calculate which scaling factor would be needed to make the image fit the display width/height
-       * @return Array containing the scaling factors for width [0] and height [1]
-       */
-      function calculateDisplaySizingFactor() {
-        var imageWidth = screenCaster.$screenImage.naturalWidth;
-        var imageHeight = screenCaster.$screenImage.naturalHeight;
-        var windowWidth = $(window).width();
-        var windowHeight = $(window).height();
-
-        return [(windowWidth / imageWidth), (windowHeight / imageHeight)];
-      }
-
-      /**
-       * This function will try to calculate the new size of on image
-       * @param scaleValue The percentage-value of the scaling (e.g. 150 for 150% of original size)
-       * @return Array with the width [0] and height [1]
-       */
-      function calculateNewImageSize(scaleValue) {
-        var actualWidth = screenCaster.$screenImage.naturalWidth;
-        var actualHeight = screenCaster.$screenImage.naturalHeight;
-        var actualScaleValue = scaleValue / 100;
-
-        return [(actualWidth * actualScaleValue), (actualHeight * actualScaleValue)];
-      }
-
-      /**
-       * Resizes the image using the given mode.
-       * Modes can be found in the screenCaster-object and start with "RESIZE_MODE_"
-       * @param resizeMode Resize mode to use
-       */
-      function resizeImage(resizeMode) {
-
-        console.log("resizeImage: " + resizeMode);
-
-        var offset, neededScaling, windowWidth, width;
-        var screenElem = screenCaster.$screenImage;
-
-        if (resizeMode !== screenCaster.RESIZE_MODE_ORIGINAL_SIZE) {
-          screenElem.style.position = "absolute";
-          screenElem.style.top = "0px";
-          screenElem.style.left = "0px";
-        } else {
-          screenElem.style.position = "initial";
-          screenElem.style.top = "initial";
-          screenElem.style.left = "initial";
-          screenElem.style.height = "initial";
-          screenElem.style.width = "initial";
-        }
-
-        switch (resizeMode) {
-          case screenCaster.RESIZE_MODE_AUTOFIT:
-            neededScaling = calculateDisplaySizingFactor();
-            //Checks whether the width or height scaling is smaller and selects the smallest scaling option
-            if (neededScaling[0] > neededScaling[1]) {
-              resizeImage(screenCaster.RESIZE_MODE_FIT_HEIGHT);
-            } else {
-              resizeImage(screenCaster.RESIZE_MODE_FIT_WIDTH);
-            }
-            break;
-
-          case screenCaster.RESIZE_MODE_FIT_HEIGHT:
-            //Image centering (if possible)
-            //This uses the scaling factor (height) and calculates the image size
-            //This is done because screenElem.clientWidth will return the "old" value from before the resize
-            width = calculateNewImageSize(calculateDisplaySizingFactor()[1] * 100)[0];
-            windowWidth = $(window).width();
-            offset = windowWidth - width;
-
-            if (offset > 0) {
-              screenElem.style.left = (offset / 2) + "px";
-            }
-
-            screenElem.style.height = "100%";
-            screenElem.style.width = "initial";
-            break;
-
-          case screenCaster.RESIZE_MODE_FIT_WIDTH:
-            //Image centering (if possible)
-            //This uses the scaling factor (width) and calculates the image size
-            //This is done because screenElem.clientWidth will return the "old" value from before the resize
-            var height = calculateNewImageSize(calculateDisplaySizingFactor()[0] * 100)[1];
-            var windowHeight = $(window).height();
-            offset = windowHeight - height;
-            if (offset > 0) {
-              screenElem.style.top = (offset / 2) + "px";
-            }
-
-            screenElem.style.height = "initial";
-            screenElem.style.width = "100%";
-            break;
-        }
-      }
-
-      function toggleResizeMode() {
-
-        var nextMode = -1;
-        if (currentResizeMode === screenCaster.RESIZE_MODE_ORIGINAL_SIZE) {
-          nextMode = screenCaster.RESIZE_MODE_AUTOFIT;
-        } else {
-          nextMode = screenCaster.RESIZE_MODE_ORIGINAL_SIZE;
-        }
-        resizeImage(nextMode);
-        currentResizeMode = nextMode;
-      }
-
-      screenCaster.$screenImage.onclick = function () {
-        toggleResizeMode();
-      };
-    }
-
-    function createScreenCaster() {
-      return {
-        showUpdates: true,
-        $screenImage: $("#screen")[0],
-        RESIZE_MODE_AUTOFIT: 0,
-        RESIZE_MODE_FIT_WIDTH: 1,
-        RESIZE_MODE_FIT_HEIGHT: 2,
-        RESIZE_MODE_ORIGINAL_SIZE: 3
-      };
-    }
-
-    function startScreenCast(screenCaster) {
-
-      screenCaster.$screenImage.onload = function() {
-        setTimeout(refreshImage, 250);
-      };
-
-      function refreshImage() {
-
-        if (!screenCaster.showUpdates) {
-          return;
-        }
-
-        console.log("screen update");
-
-        screenCaster.$screenImage.src = "/screenshot.jpg?" + Date.now();
-      }
-
-      setTimeout(refreshImage, 250);
-    }
-
-    function initScreenCaster() {
-
-      initScreenVisibilityHandling();
-
-      var screenCaster = createScreenCaster();
-
-      initResizeTools(screenCaster);
-
-      startScreenCast(screenCaster);
-    }
-
-    $(document).ready(initScreenCaster);
-  </script>
+  <script src="js/app.js"></script>
 </head>
-<body>
-<div id="screenContainer">
-  <img id="screen" src="/screenshot" alt="Screenshot" unselectable="on" onselectstart="return false;"/>
-</div>
+<body th:with="isWatcher = (${requestType} == 'watcher'),isCaster = (${requestType} == 'caster')">
+
+<script th:if="${isCaster}">
+
+  $(document).ready(function () {
+    //disable local notifications
+    screenCaster.notificationStatus.enabled = false;
+  });
+</script>
+
+<main>
+
+  <div class="container">
+    <div class="row">
+      <button id="btnShowNotes" type="button" class="btn btn-info btn-lg" data-toggle="modal"
+              data-target="#notesDialog">
+        Notes
+        <span id="unreadNotesCounter" class="badge">0</span>
+
+      </button>
+
+      <div class="col col-md-4">
+      </div>
+
+      <div id="castInfo" th:if="${isCaster}" class="col col-md-6">
+        <h1>Screencast URL <span th:text="${screencastUrl}"/></h1>
+      </div>
+    </div>
+  </div>
+
+
+  <div id="screenContainer" th:if="${isWatcher}">
+    <img id="screen" src="/screenshot" class="screen-fit" unselectable="on" onselectstart="return false;"/>
+  </div>
+
+  <div id="notesDialog" class="modal fade" role="dialog" tabindex="-1">
+
+    <div id="notesDialogBox" class="modal-dialog panel panel-default">
+
+      <div class="modal-header panel-heading">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h2 class="modal-title">Notes</h2>
+      </div>
+
+      <div class="modal-body panel panel-body">
+
+        <div id="notesListContainer">
+          <ol id="notesList" class="list-group">
+            <li th:each="note : ${notes}" data:note-id="${note.id}" class="list-group-item">
+              <div class="note read">
+                <p th:utext="${note.text}">Note text</p>
+                <div>
+                  <span class="note-time" th:text="${#temporals.format(note.createdAt, 'dd.MM.yy HH:mm:ss')}"></span>
+                  <form class="note-actions" th:action="'/notes/' + ${note.id}" onsubmit="return false;"
+                        th:if="${isCaster}">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                    <button type="submit" onclick="updateNote(event)" name="action" value="delete"
+                            class="glyphicon glyphicon-trash"></button>
+                  </form>
+                </div>
+              </div>
+            </li>
+          </ol>
+        </div>
+
+        <hr/>
+
+        <form id="notesForm" action="/notes" method="post" th:if="${isCaster}">
+          <div class="form-group">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+            <label for="txtNote">New Note</label>
+            <textarea id="txtNote" name="text" th:required="required" class="form-control" rows="3"></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary">Sent</button>
+          <button type="reset" class="btn">Reset</button>
+        </form>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+
+    </div>
+  </div>
+
+</main>
+<script id="note-template" type="x-tmpl-mustache">
+  <li data-note-id="{{id}}" class="list-group-item">
+    <div class="note new" onmouseover="markNoteAsRead(this);">
+      <p>{{{text}}}</p>
+      <div>
+        <span class="note-time">{{createdAtHuman}}</span>
+        <span class="new-note-marker glyphicon glyphicon-asterisk"/>
+        <form class="note-actions" action="/notes/{{id}}" onsubmit="return false;" th:if="${isCaster}">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+            <button type="submit" onclick="updateNote(event)" name="action" value="delete" class="glyphicon glyphicon-trash"/>
+        </form>
+      </div>
+    </div>
+  </li>
+
+</script>
 </body>
 </html>

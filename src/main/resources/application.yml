@@ -4,15 +4,21 @@ server:
     enabled: true
     mime-types: application/json,application/xml,text/html,text/xml,text/plain,text/css,application/javascript,image/jpeg,image/png
 
-screencast:
-  refreshIntervalMillis: 150
 
-security:
-    user:
-      name: admin
-      password: admin
-    basic:
-      path: /admin/**
+spring:
+  jackson:
+    serialization:
+      write_dates_as_timestamps: false
+  thymeleaf:
+    cache: false
+  resources:
+    chain:
+      cache: false
+
+
+screencaster:
+  refreshIntervalMillis: 250
+
 
 
 

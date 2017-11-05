@@ -3,9 +3,15 @@ function initNotifications(screenCaster) {
   if (!("Notification" in window)) {
     console.log("This browser does not support system notifications");
     screenCaster.notificationStatus.enabled = false;
-  } else if (Notification.permission === "granted") {
+    return;
+  }
+
+  if (Notification.permission === "granted") {
     screenCaster.notificationStatus.enabled = true;
-  } else if (Notification.permission !== 'denied') {
+    return;
+  }
+
+  if (Notification.permission !== 'denied') {
     Notification.requestPermission(function (permission) {
       if (permission === "granted") {
         screenCaster.notificationStatus.enabled = true;

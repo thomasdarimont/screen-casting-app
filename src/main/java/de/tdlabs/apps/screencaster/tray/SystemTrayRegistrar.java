@@ -1,7 +1,7 @@
 package de.tdlabs.apps.screencaster.tray;
 
 import de.tdlabs.apps.screencaster.ScreenCasterProperties;
-import de.tdlabs.apps.screencaster.Settings;
+import de.tdlabs.apps.screencaster.settings.SettingsService;
 import dorkbox.systemTray.Menu;
 import dorkbox.systemTray.MenuItem;
 import dorkbox.systemTray.SystemTray;
@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -17,12 +18,13 @@ import java.io.IOException;
 @RequiredArgsConstructor
 class SystemTrayRegistrar {
 
-  private final Settings settings;
+  private final SettingsService settingsService;
 
   private final ScreenCasterProperties screenCasterProperties;
 
   @PostConstruct
   public void init() {
+
 
     SystemTray systemTray = SystemTray.get();
     systemTray.setTooltip("Screen Caster");
@@ -30,21 +32,29 @@ class SystemTrayRegistrar {
     toggleTrayStatus(systemTray, screenCasterProperties.getScreencast().isAutoStart());
 
     Menu menu = systemTray.getMenu();
-    
+
     menu.add(new MenuItem("Enable Screencast", (e) -> {
-      settings.setCastEnabled(true);
+      settingsService.enableCast();
       toggleTrayStatus(systemTray, true);
     }));
 
     menu.add(new MenuItem("Disable Screencast", (e) -> {
-      settings.setCastEnabled(false);
+      settingsService.disableCast();
       toggleTrayStatus(systemTray, false);
     }));
 
     menu.add(new MenuItem("Quit", (e) -> {
-      settings.setCastEnabled(false);
+      settingsService.disableCast();
       System.exit(0);
     }));
+  }
+
+  @PreDestroy
+  public void destroy() {
+    SystemTray systemTray = SystemTray.get();
+    if (systemTray != null) {
+      systemTray.getMenu().clear();
+    }
   }
 
   private void toggleTrayStatus(SystemTray systemTray, boolean enabled) {

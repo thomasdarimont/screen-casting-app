@@ -62,6 +62,7 @@ function initResizeTools(screenCaster) {
 
 function createScreenCaster() {
   return window.screenCaster = {
+    enabled: true,
     showUpdates: true,
     notificationStatus: {
       enabled: false,
@@ -70,7 +71,7 @@ function createScreenCaster() {
   };
 }
 
-function startScreenCast(screenCaster) {
+function startScreenCast() {
 
   if ("URLSearchParams" in window) {
     var urlParams = new URLSearchParams(window.location.search);
@@ -80,6 +81,11 @@ function startScreenCast(screenCaster) {
   }
 
   screenCaster.$screenImage.onload = function () {
+
+    if (!screenCaster.enabled) {
+      return;
+    }
+
     setTimeout(refreshImage, screenUpdateInterval);
   };
 
@@ -108,12 +114,28 @@ function initWebSocketConnection() {
     console.log('Connected: ' + frame);
 
     stompClient.subscribe("/topic/notes", function (noteMessage) {
-      var noteEvent = JSON.parse(noteMessage.body);
-      // console.log(noteEvent);
+      onNoteEvent(JSON.parse(noteMessage.body));
+    });
 
-      onNoteEvent(noteEvent);
+    stompClient.subscribe("/topic/settings", function (settingsMessage) {
+      onSettingsEvent(JSON.parse(settingsMessage.body));
     });
   });
+}
+
+function onSettingsEvent(settingsEvent) {
+
+  if (settingsEvent.type === "updated") {
+
+    var enabledChanged = screenCaster.enabled !== settingsEvent.settings.castEnabled;
+    screenCaster.enabled = settingsEvent.settings.castEnabled;
+
+    if (screenCaster.enabled && enabledChanged) {
+      startScreenCast();
+    }
+
+    $("#screenCastStatus").text(screenCaster.enabled ? "active" : "not active");
+  }
 }
 
 function onNoteEvent(noteEvent) {

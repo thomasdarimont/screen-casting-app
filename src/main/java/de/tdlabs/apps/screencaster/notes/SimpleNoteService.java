@@ -1,5 +1,6 @@
 package de.tdlabs.apps.screencaster.notes;
 
+import de.tdlabs.apps.screencaster.config.WebsocketDestinations;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
@@ -24,7 +25,7 @@ class SimpleNoteService implements NoteService {
 
     Note saved = noteRepository.save(note);
 
-    this.messagingTemplate.convertAndSend("/topic/notes", NoteEvent.created(saved));
+    this.messagingTemplate.convertAndSend(WebsocketDestinations.TOPIC_NOTES, NoteEvent.created(saved));
 
     return saved;
   }

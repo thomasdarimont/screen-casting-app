@@ -1,7 +1,7 @@
 package de.tdlabs.apps.screencaster.web;
 
-import de.tdlabs.apps.screencaster.Settings;
 import de.tdlabs.apps.screencaster.notes.NoteService;
+import de.tdlabs.apps.screencaster.settings.SettingsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Controller;
@@ -15,7 +15,7 @@ import java.net.Inet4Address;
 @RequiredArgsConstructor
 class WebUi {
 
-  private final Settings settings;
+  private final SettingsService settingsService;
 
   private final Environment env;
 
@@ -27,7 +27,7 @@ class WebUi {
     model.addAttribute("hostname", Inet4Address.getLocalHost().getHostName());
 
     model.addAttribute("screencastUrl", "http://" + Inet4Address.getLocalHost().getHostName() + ":" + env.getProperty("server.port") + "/");
-    model.addAttribute("settings", this.settings);
+    model.addAttribute("settings", this.settingsService);
     model.addAttribute("requestType", isLocalRequest(request) ? "caster" : "watcher");
 
     model.addAttribute("notes", noteService.findAll());

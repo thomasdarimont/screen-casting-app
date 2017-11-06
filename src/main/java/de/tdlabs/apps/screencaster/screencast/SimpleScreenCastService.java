@@ -1,7 +1,7 @@
 package de.tdlabs.apps.screencaster.screencast;
 
 import de.tdlabs.apps.screencaster.ScreenCasterProperties;
-import de.tdlabs.apps.screencaster.Settings;
+import de.tdlabs.apps.screencaster.settings.SettingsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -22,7 +22,7 @@ class SimpleScreenCastService implements ScreenCastService {
 
   private final ScreenGrabber screenGrabber;
 
-  private final Settings settings;
+  private final SettingsService settingsService;
 
   private final ScreenCasterProperties screenCasterProperties;
 
@@ -31,7 +31,7 @@ class SimpleScreenCastService implements ScreenCastService {
   @Scheduled(fixedDelayString = "#{${screencaster.refreshIntervalMillis:-1}}")
   void updateImage() {
 
-    if (!settings.isCastEnabled()) {
+    if (!settingsService.isCastEnabled()) {
       LiveImage currentLiveImage = currentImage.get();
 
       if (currentLiveImage instanceof PauseImage) {

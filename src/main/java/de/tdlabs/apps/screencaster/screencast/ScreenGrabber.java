@@ -16,17 +16,19 @@ class ScreenGrabber {
   public ScreenGrabber(ScreenCasterProperties screenCastProperties) {
 
     ScreenGrabbingProperties screenGrabbingProperties = screenCastProperties.getGrabbing();
-
     GraphicsDevice screen = selectScreenDevice(screenGrabbingProperties);
-
-    DisplayMode displayMode = screen.getDisplayMode();
-    this.screenRect = new Rectangle(0, 0, displayMode.getWidth(), displayMode.getHeight());
+    this.screenRect = getScreenRectangle(screen);
 
     try {
       this.robot = new Robot(screen);
     } catch (AWTException e) {
       throw new RuntimeException(e);
     }
+  }
+
+  private Rectangle getScreenRectangle(GraphicsDevice screen) {
+    DisplayMode displayMode = screen.getDisplayMode();
+    return new Rectangle(displayMode.getWidth(), displayMode.getHeight());
   }
 
   private GraphicsDevice selectScreenDevice(ScreenGrabbingProperties screenGrabbingProperties) {

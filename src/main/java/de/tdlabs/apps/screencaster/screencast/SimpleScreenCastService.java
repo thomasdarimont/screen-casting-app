@@ -32,23 +32,30 @@ class SimpleScreenCastService implements ScreenCastService {
   void updateImage() {
 
     if (!settingsService.isCastEnabled()) {
-      LiveImage currentLiveImage = currentImage.get();
-
-      if (currentLiveImage instanceof PauseImage) {
-        return;
-      }
-
-      currentImage.lazySet(new PauseImage("Paused...", currentLiveImage));
+      usePauseImage();
       return;
     }
 
+    useLiveImage();
+  }
+
+  private void useLiveImage() {
     currentImage.lazySet(new LiveImage(screenGrabber.grab(), screenCasterProperties.getGrabbing().getQuality()));
+  }
+
+  private void usePauseImage() {
+
+    LiveImage current = currentImage.get();
+    if (current instanceof PauseImage) {
+      return;
+    }
+
+    currentImage.lazySet(new PauseImage("Paused...", current));
   }
 
   public byte[] getLatestScreenShotImageBytes() {
     return currentImage.get().getBytes();
   }
-
 
   static class LiveImage {
 

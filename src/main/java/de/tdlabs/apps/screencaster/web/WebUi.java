@@ -1,6 +1,5 @@
 package de.tdlabs.apps.screencaster.web;
 
-import de.tdlabs.apps.screencaster.notes.NoteService;
 import de.tdlabs.apps.screencaster.settings.SettingsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.env.Environment;
@@ -19,8 +18,6 @@ class WebUi {
 
   private final Environment env;
 
-  private final NoteService noteService;
-
   @GetMapping("/")
   String index(Model model, HttpServletRequest request) throws Exception {
 
@@ -29,8 +26,6 @@ class WebUi {
     model.addAttribute("screencastUrl", "http://" + Inet4Address.getLocalHost().getHostName() + ":" + env.getProperty("server.port") + "/");
     model.addAttribute("settings", this.settingsService);
     model.addAttribute("requestType", isLocalRequest(request) ? "caster" : "watcher");
-
-    model.addAttribute("notes", noteService.findAll());
 
     return "index";
   }

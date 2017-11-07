@@ -143,15 +143,8 @@ function onSettingsEvent(settingsEvent) {
 function onNoteEvent(noteEvent) {
 
   if (noteEvent.type === "created") {
-    var template = $('#note-template').html();
-    Mustache.parse(template);   // optional, speeds up future uses
 
-    var note = noteEvent.note;
-    note.createdAtHuman = moment(note.createdAt).format("DD.MM.YY HH:mm:ss");
-
-    var rendered = Mustache.render(template, note).trim();
-
-    $("#notesList").append(rendered);
+    addNote(noteEvent.note);
 
     var $notesListContainer = $("#notesListContainer");
     $notesListContainer.animate({scrollTop: $notesListContainer.prop("scrollHeight")}, 250);
@@ -172,6 +165,18 @@ function onNoteEvent(noteEvent) {
   }
 
   updateUnreadNotesCount();
+}
+
+function addNote(note) {
+
+  var template = $('#note-template').html();
+  Mustache.parse(template);   // optional, speeds up future uses
+
+  note.createdAtHuman = moment(note.createdAt).format("DD.MM.YY HH:mm:ss");
+
+  var rendered = Mustache.render(template, note).trim();
+
+  $("#notesList").append(rendered);
 }
 
 function updateUnreadNotesCount() {
@@ -209,6 +214,15 @@ function markNoteAsRead(note) {
   updateUnreadNotesCount();
 }
 
+function loadNotes() {
+
+  $.getJSON("/notes", function (notes) {
+    for (var i = 0; i < notes.length; i++) {
+      addNote(notes[i]);
+    }
+  });
+}
+
 function initScreenCaster() {
 
   initWebSocketConnection();
@@ -222,6 +236,8 @@ function initScreenCaster() {
     initResizeTools(screenCaster);
     startScreenCast(screenCaster);
   }
+
+  loadNotes();
 
   $("#notesForm").submit(function (event) {
 

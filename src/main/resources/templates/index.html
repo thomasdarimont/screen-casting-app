@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:data="http://www.thymeleaf.org/extras/data">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
   <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
@@ -37,8 +37,6 @@
 </script>
 
 <main>
-
-
   <div id="screenContainer" data-xxx="th:if='${isWatcher}'" class="container-fluid">
     <div class="row">
       <img id="screen" src="/screenshot" class="screen-fit img-responsive" unselectable="on"
@@ -82,26 +80,7 @@
       <div class="modal-body panel panel-body">
 
         <div id="notesListContainer">
-          <ol id="notesList" class="list-group">
-            <li th:each="note : ${notes}" data:note-id="${note.id}" class="list-group-item">
-              <div class="note read">
-                <p th:utext="${note.text}">Note text</p>
-                <div>
-                  <form class="note-actions" th:action="'/notes/' + ${note.id}" onsubmit="return false;"
-                        th:if="${isCaster}">
-                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" class="csrf"/>
-
-                    <ul class="list-inline">
-                      <span class="note-time"
-                            th:text="${#temporals.format(note.createdAt, 'dd.MM.yy HH:mm:ss')}"></span>
-                      <button type="submit" onclick="updateNote(event)" name="action" value="delete"
-                              class="glyphicon glyphicon-trash"></button>
-                    </ul>
-                  </form>
-                </div>
-              </div>
-            </li>
-          </ol>
+          <ol id="notesList" class="list-group"></ol>
         </div>
 
         <form id="notesForm" action="/notes" method="post" th:if="${isCaster}">
@@ -141,16 +120,6 @@
       </div>
     </div>
   </li>
-
-
-
-
-
-
-
-
-
-
 </script>
 </body>
 </html>

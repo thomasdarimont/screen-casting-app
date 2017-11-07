@@ -47,6 +47,8 @@ function initScreenVisibilityHandling() {
       document.title = "Active...";
       console.log("start updating");
       screenCaster.showUpdates = true;
+
+      startScreenCast();
     }
   }
 
@@ -183,10 +185,10 @@ function updateNote(event) {
   if (event.currentTarget.value === 'delete') {
 
     var headers = {
-      "X-CSRF-TOKEN": $(event.target.parentElement).find("input[type=hidden]")[0].value
+      "X-CSRF-TOKEN": $(".csrf:first")[0].value
     };
 
-    var noteUrl = $(event.target.parentElement).attr("action");
+    var noteUrl = $(event.target.form).attr("action");
 
     $.ajax({
       url: noteUrl,

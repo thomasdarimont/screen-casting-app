@@ -38,6 +38,14 @@
 
 <main>
 
+
+  <div id="screenContainer" data-xxx="th:if='${isWatcher}'" class="container-fluid">
+    <div class="row">
+      <img id="screen" src="/screenshot" class="screen-fit img-responsive" unselectable="on"
+           onselectstart="return false;"/>
+    </div>
+  </div>
+
   <div class="container">
     <div class="row">
       <button id="btnShowNotes" type="button" class="btn btn-info btn-lg" data-toggle="modal"
@@ -53,18 +61,13 @@
     </div>
 
     <div class="row">
-      <div id="castInfo" th:if="${isCaster}" class="jumbotron">
+      <div id="castInfo" th:if="${isCaster &amp;&amp; false}" class="jumbotron">
         <h1>Screencast</h1>
         <h2>URL: <span th:text="${screencastUrl}"/></h2>
         <p>Status: <span id="screenCastStatus" th:text="${settings.castEnabled} ? 'active' : 'not active'">active</span>
         </p>
       </div>
     </div>
-  </div>
-
-
-  <div id="screenContainer" th:if="${isWatcher}">
-    <img id="screen" src="/screenshot" class="screen-fit" unselectable="on" onselectstart="return false;"/>
   </div>
 
   <div id="notesDialog" class="modal fade" role="dialog" tabindex="-1">
@@ -84,12 +87,16 @@
               <div class="note read">
                 <p th:utext="${note.text}">Note text</p>
                 <div>
-                  <span class="note-time" th:text="${#temporals.format(note.createdAt, 'dd.MM.yy HH:mm:ss')}"></span>
                   <form class="note-actions" th:action="'/notes/' + ${note.id}" onsubmit="return false;"
                         th:if="${isCaster}">
-                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-                    <button type="submit" onclick="updateNote(event)" name="action" value="delete"
-                            class="glyphicon glyphicon-trash"></button>
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" class="csrf"/>
+
+                    <ul class="list-inline">
+                      <span class="note-time"
+                            th:text="${#temporals.format(note.createdAt, 'dd.MM.yy HH:mm:ss')}"></span>
+                      <button type="submit" onclick="updateNote(event)" name="action" value="delete"
+                              class="glyphicon glyphicon-trash"></button>
+                    </ul>
                   </form>
                 </div>
               </div>
@@ -97,9 +104,8 @@
           </ol>
         </div>
 
-        <hr/>
-
         <form id="notesForm" action="/notes" method="post" th:if="${isCaster}">
+          <hr/>
           <div class="form-group">
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
             <label for="txtNote">New Note</label>
@@ -123,15 +129,28 @@
     <div class="note new" onmouseover="markNoteAsRead(this);">
       <p>{{{text}}}</p>
       <div>
-        <span class="note-time">{{createdAtHuman}}</span>
-        <span class="new-note-marker glyphicon glyphicon-asterisk"/>
         <form class="note-actions" action="/notes/{{id}}" onsubmit="return false;" th:if="${isCaster}">
-            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-            <button type="submit" onclick="updateNote(event)" name="action" value="delete" class="glyphicon glyphicon-trash"/>
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" class="csrf" />
+
+            <ul class="list-inline">
+              <span class="note-time">{{createdAtHuman}}</span>
+              <button type="submit" onclick="updateNote(event)" name="action" value="delete" class="glyphicon glyphicon-trash"/>
+              <span class="new-note-marker glyphicon glyphicon-asterisk"/>
+            </ul>
         </form>
       </div>
     </div>
   </li>
+
+
+
+
+
+
+
+
+
+
 </script>
 </body>
 </html>

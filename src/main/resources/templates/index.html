@@ -20,7 +20,7 @@
 
   <script src="js/app.js"></script>
 </head>
-<body th:with="isWatcher = (${requestType} == 'watcher'),isCaster = (${requestType} == 'caster')">
+<body th:with="isWatcher = (${requestType} == 'watcher'), isCaster = (${requestType} == 'caster')">
 
 <script th:if="${isCaster}">
 
@@ -70,9 +70,13 @@
 
       <div class="modal-header panel-heading">
         <button type="button" class="close" data-dismiss="modal" title="Close">&times;</button>
-        <h2 class="modal-title">Notes</h2>
-        <a href="#" role="button" onclick="scrollToLatestNote()" class="btn btn-default pull-right"
-           tooltip="Show latest note"><span class="glyphicon glyphicon-chevron-down"></span></a>
+        <h2 class="modal-title">Notes
+          <button onclick="scrollToLatestNote()"
+                  class="btn btn-default btn-show-latest-note"
+                  title="Show latest note"><span
+            class="glyphicon glyphicon-chevron-down"></span>
+          </button>
+        </h2>
       </div>
 
       <div class="modal-body panel panel-body">
@@ -94,7 +98,10 @@
           <div class="form-group">
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
             <label for="txtNote">New Note</label>
-            <textarea id="txtNote" name="text" th:required="required" class="form-control" rows="3"></textarea>
+            <a href="https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet" target="_blank">Markdown
+              Syntax</a>
+            <textarea id="txtNote" name="text" th:required="required" class="form-control" rows="3"
+                      placeholder="Write your note here..."></textarea>
           </div>
           <button type="submit" class="btn btn-primary" title="Sent">Sent</button>
           <button type="reset" class="btn" title="Reset">Reset</button>
@@ -119,16 +126,13 @@
           <span class="new-note-marker glyphicon glyphicon-asterisk"/>
           <form class="note-actions" action="/notes/{{id}}" onsubmit="return false;" th:if="${isCaster}">
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" class="csrf" />
-            <button type="submit" onclick="updateNote(event)" name="action" value="delete" class="glyphicon glyphicon-trash" title="Delete note {{id}}"/>
+            <button type="submit" onclick="updateNote(event)" name="action" value="delete"
+                    class="glyphicon glyphicon-trash" title="Delete note {{id}}"/>
           </form>
         </ul>
       </div>
     </div>
   </li>
-
-
-
-
 </script>
 </body>
 </html>

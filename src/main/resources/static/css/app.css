@@ -61,3 +61,7 @@ html, body { /* Removes unnecessary borders */
 .note.new .new-note-marker {
   color: #f3f;
 }
+
+.modal-title {
+  display: inline;
+}

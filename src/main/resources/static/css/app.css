@@ -38,6 +38,11 @@ html, body { /* Removes unnecessary borders */
   position: absolute;
   top: 15px;
   left: 15px;
+  opacity: 0.25;
+}
+
+#btnShowNotes:hover {
+  opacity: 1.0;
 }
 
 #notesListContainer {

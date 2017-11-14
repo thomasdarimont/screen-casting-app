@@ -5,8 +5,11 @@ import de.tdlabs.apps.screencaster.settings.SettingsService;
 import dorkbox.systemTray.Menu;
 import dorkbox.systemTray.MenuItem;
 import dorkbox.systemTray.SystemTray;
+import dorkbox.util.Desktop;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -15,6 +18,7 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 class SystemTrayRegistrar {
@@ -25,16 +29,30 @@ class SystemTrayRegistrar {
 
   private final ConfigurableApplicationContext applicationContext;
 
+  private final Environment env;
+
   @PostConstruct
   public void init() {
-
 
     SystemTray systemTray = SystemTray.get();
     systemTray.setTooltip("Screen Caster");
 
     toggleTrayStatus(systemTray, screenCasterProperties.getScreencast().isAutoStart());
 
+    setupMenu(systemTray);
+  }
+
+  private void setupMenu(SystemTray systemTray) {
+
     Menu menu = systemTray.getMenu();
+
+    menu.add(new MenuItem("Open Screencaster", (e) -> {
+      try {
+        Desktop.browseURL("http://localhost:" + env.getProperty("server.port"));
+      } catch (IOException ioe) {
+        log.error("Could not browse to Screencaster URL", ioe);
+      }
+    }));
 
     menu.add(new MenuItem("Enable Screencast", (e) -> {
       settingsService.enableCast();

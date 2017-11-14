@@ -1,9 +1,3 @@
-server:
-  port: 9999
-  compression:
-    enabled: true
-    mime-types: application/json,application/xml,text/html,text/xml,text/plain,text/css,application/javascript,image/jpeg,image/png
-
 spring:
   jackson:
     serialization:
@@ -13,7 +7,18 @@ spring:
   resources:
     chain:
       cache: false
+  datasource:
+    url: jdbc:h2:file:./data/${screencaster.database}/notes;DB_CLOSE_ON_EXIT=FALSE
+  jpa:
+    hibernate:
+      ddl-auto: update
 
+server:
+  port: 9999
+  compression:
+    enabled: true
+    mime-types: application/json,application/xml,text/html,text/xml,text/plain,text/css,application/javascript,image/jpeg,image/png
 
 screencaster:
   refreshIntervalMillis: 250
+  database: default

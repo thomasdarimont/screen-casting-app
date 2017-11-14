@@ -3,6 +3,7 @@ package de.tdlabs.apps.screencaster.notes;
 import java.util.List;
 
 public interface NoteService {
+
   Note save(Note note);
 
   Note findById(Long id);
@@ -10,4 +11,6 @@ public interface NoteService {
   List<Note> findAll();
 
   void delete(Note note);
+
+  void deleteAll();
 }

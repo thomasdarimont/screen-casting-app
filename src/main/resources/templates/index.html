@@ -5,6 +5,8 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
   <title th:text="|Screencast@${hostname}|">Screencast@localhost</title>
 
+  <meta name="csrf" th:value="${_csrf.token}"/>
+
   <script src="/webjars/jquery/jquery.min.js"></script>
   <script src="/webjars/mustache/mustache.min.js"></script>
   <script src="/webjars/sockjs-client/sockjs.min.js"></script>
@@ -37,7 +39,12 @@
 </script>
 
 <main>
-  <div id="screenContainer" data-xxx="th:if='${isWatcher}'" class="container-fluid">
+
+  <button id="btnShowNotes" type="button" class="btn btn-info btn-lg" data-toggle="modal"
+          data-target="#notesDialog" title="Show notes">Notes <span id="unreadNotesCounter" class="badge">0</span>
+  </button>
+
+  <div id="screenContainer" th:if="${isWatcher}" class="container-fluid">
     <div class="row">
       <img id="screen" src="/screenshot" class="screen-fit img-responsive" unselectable="on"
            onselectstart="return false;"/>
@@ -46,25 +53,14 @@
 
   <div class="container">
     <div class="row">
-      <button id="btnShowNotes" type="button" class="btn btn-info btn-lg" data-toggle="modal"
-              data-target="#notesDialog">
-        Notes
-        <span id="unreadNotesCounter" class="badge">0</span>
-
-      </button>
-
-      <!--<div id="castInfo" th:if="${isCaster}" class="col col-md-8">-->
-      <!--<h2>Screencast Status: <span id="screenCastStatus">active</span> URL: <span th:text="${screencastUrl}"/></h2>-->
-      <!--</div>-->
-    </div>
-
-    <div class="row">
-      <div id="castInfo" th:if="${isCaster &amp;&amp; false}" class="jumbotron">
+      <div class="col-md-3"></div>
+      <div id="castInfo" th:if="${isCaster}" class="col-md-6">
         <h1>Screencast</h1>
         <h2>URL: <span th:text="${screencastUrl}"/></h2>
         <p>Status: <span id="screenCastStatus" th:text="${settings.castEnabled} ? 'active' : 'not active'">active</span>
         </p>
       </div>
+      <div class="col-md-3"></div>
     </div>
   </div>
 
@@ -73,8 +69,10 @@
     <div id="notesDialogBox" class="modal-dialog panel panel-default">
 
       <div class="modal-header panel-heading">
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <button type="button" class="close" data-dismiss="modal" title="Close">&times;</button>
         <h2 class="modal-title">Notes</h2>
+        <a href="#" role="button" onclick="scrollToLatestNote()" class="btn btn-default pull-right"
+           tooltip="Show latest note"><span class="glyphicon glyphicon-chevron-down"></span></a>
       </div>
 
       <div class="modal-body panel panel-body">
@@ -84,19 +82,27 @@
         </div>
 
         <form id="notesForm" action="/notes" method="post" th:if="${isCaster}">
+
+          <button type="submit"
+                  onclick="updateNote(event)"
+                  name="action"
+                  value="deleteAll"
+                  class="glyphicon glyphicon-trash pull-right"
+                  title="Delete all notes"></button>
+
           <hr/>
           <div class="form-group">
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
             <label for="txtNote">New Note</label>
             <textarea id="txtNote" name="text" th:required="required" class="form-control" rows="3"></textarea>
           </div>
-          <button type="submit" class="btn btn-primary">Sent</button>
-          <button type="reset" class="btn">Reset</button>
+          <button type="submit" class="btn btn-primary" title="Sent">Sent</button>
+          <button type="reset" class="btn" title="Reset">Reset</button>
         </form>
       </div>
 
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal" title="Close">Close</button>
       </div>
 
     </div>
@@ -105,21 +111,24 @@
 </main>
 <script id="note-template" type="x-tmpl-mustache">
   <li data-note-id="{{id}}" class="list-group-item">
-    <div class="note new" onmouseover="markNoteAsRead(this);">
-      <p>{{{text}}}</p>
+    <div class="note new" onmouseover="markNoteAsRead(this)">
+      <p><span>#{{id}} </span>{{{text}}}</p>
       <div>
-        <form class="note-actions" action="/notes/{{id}}" onsubmit="return false;" th:if="${isCaster}">
+        <ul class="list-inline">
+          <span class="note-time">{{createdAtHuman}} </span>
+          <span class="new-note-marker glyphicon glyphicon-asterisk"/>
+          <form class="note-actions" action="/notes/{{id}}" onsubmit="return false;" th:if="${isCaster}">
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" class="csrf" />
-
-            <ul class="list-inline">
-              <span class="note-time">{{createdAtHuman}}</span>
-              <button type="submit" onclick="updateNote(event)" name="action" value="delete" class="glyphicon glyphicon-trash"/>
-              <span class="new-note-marker glyphicon glyphicon-asterisk"/>
-            </ul>
-        </form>
+            <button type="submit" onclick="updateNote(event)" name="action" value="delete" class="glyphicon glyphicon-trash" title="Delete note {{id}}"/>
+          </form>
+        </ul>
       </div>
     </div>
   </li>
+
+
+
+
 </script>
 </body>
 </html>

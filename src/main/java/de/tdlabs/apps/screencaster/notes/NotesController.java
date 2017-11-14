@@ -19,7 +19,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/notes")
 @RequiredArgsConstructor
-public class NotesController {
+class NotesController {
 
   private final NoteService noteService;
 
@@ -33,14 +33,22 @@ public class NotesController {
     return ResponseEntity.created(location).build();
   }
 
-  @GetMapping("/{id}")
-  ResponseEntity<Note> findById(@PathVariable("id") Long id) {
-    return ResponseEntity.ok(noteService.findById(id));
-  }
-
   @GetMapping
   ResponseEntity<List<Note>> findAll() {
     return ResponseEntity.ok(noteService.findAll());
+  }
+
+  @DeleteMapping
+  @PreAuthorize("#request.getRemoteAddr().equals(#request.getLocalAddr())")
+  ResponseEntity<Note> deleteAll(HttpServletRequest request) {
+
+    noteService.deleteAll();
+    return ResponseEntity.noContent().build();
+  }
+
+  @GetMapping("/{id}")
+  ResponseEntity<Note> findById(@PathVariable("id") Long id) {
+    return ResponseEntity.ok(noteService.findById(id));
   }
 
   @DeleteMapping("/{id}")

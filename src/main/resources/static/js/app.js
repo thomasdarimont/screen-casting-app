@@ -82,6 +82,10 @@ function startScreenCast() {
     }
   }
 
+  if (!screenCaster.$screenImage) {
+    return;
+  }
+
   screenCaster.$screenImage.onload = function () {
 
     if (!screenCaster.enabled) {
@@ -140,14 +144,18 @@ function onSettingsEvent(settingsEvent) {
   }
 }
 
+function scrollToLatestNote() {
+  var $notesListContainer = $("#notesListContainer");
+  $notesListContainer.animate({scrollTop: $notesListContainer.prop("scrollHeight")}, 250);
+}
+
 function onNoteEvent(noteEvent) {
 
   if (noteEvent.type === "created") {
 
     addNote(noteEvent.note);
 
-    var $notesListContainer = $("#notesListContainer");
-    $notesListContainer.animate({scrollTop: $notesListContainer.prop("scrollHeight")}, 250);
+    scrollToLatestNote();
 
     if (screenCaster.notificationStatus.enabled) {
 
@@ -187,11 +195,11 @@ function updateNote(event) {
 
   event.preventDefault();
 
-  if (event.currentTarget.value === 'delete') {
+  var headers = {
+    "X-CSRF-TOKEN": $("meta[name=csrf]").attr("value")
+  };
 
-    var headers = {
-      "X-CSRF-TOKEN": $(".csrf:first")[0].value
-    };
+  if (event.currentTarget.value === 'delete') {
 
     var noteUrl = $(event.target.form).attr("action");
 
@@ -200,7 +208,30 @@ function updateNote(event) {
       type: "delete",
       headers: headers
     }).done(function (response) {
-      // console.log(response);
+      console.log("note deleted");
+    });
+
+    return;
+  }
+
+  if (event.currentTarget.value === 'deleteAll') {
+
+    var proceed = window.confirm("Delete all notes?");
+
+    if (!proceed) {
+      return;
+    }
+
+    var noteUrl = "/notes";
+
+    $.ajax({
+      url: noteUrl,
+      type: "delete",
+      headers: headers
+    }).done(function (response) {
+      console.log("all notes deleted");
+
+      $("li[data-note-id]").remove();
     });
   }
 }

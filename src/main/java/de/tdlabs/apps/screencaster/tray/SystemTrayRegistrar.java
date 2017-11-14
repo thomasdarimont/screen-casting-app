@@ -54,12 +54,12 @@ class SystemTrayRegistrar {
       }
     }));
 
-    menu.add(new MenuItem("Enable Screencast", (e) -> {
+    menu.add(new MenuItem("Start Screencast", (e) -> {
       settingsService.enableCast();
       toggleTrayStatus(systemTray, true);
     }));
 
-    menu.add(new MenuItem("Disable Screencast", (e) -> {
+    menu.add(new MenuItem("Stop Screencast", (e) -> {
       settingsService.disableCast();
       toggleTrayStatus(systemTray, false);
     }));
@@ -83,10 +83,10 @@ class SystemTrayRegistrar {
 
     if (enabled) {
       systemTray.setImage(ImageResources.CAST_ENABLED_ICON);
-      systemTray.setStatus("Screencast enabled");
+      systemTray.setStatus("Screencast running");
     } else {
       systemTray.setImage(ImageResources.CAST_DISABLED_ICON);
-      systemTray.setStatus("Screencast disabled");
+      systemTray.setStatus("Screencast paused");
     }
 
     systemTray.setTooltip(systemTray.getStatus());

@@ -6,6 +6,7 @@ import dorkbox.systemTray.Menu;
 import dorkbox.systemTray.MenuItem;
 import dorkbox.systemTray.SystemTray;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -21,6 +22,8 @@ class SystemTrayRegistrar {
   private final SettingsService settingsService;
 
   private final ScreenCasterProperties screenCasterProperties;
+
+  private final ConfigurableApplicationContext applicationContext;
 
   @PostConstruct
   public void init() {
@@ -45,6 +48,7 @@ class SystemTrayRegistrar {
 
     menu.add(new MenuItem("Quit", (e) -> {
       settingsService.disableCast();
+      applicationContext.close();
       System.exit(0);
     }));
   }
@@ -66,6 +70,8 @@ class SystemTrayRegistrar {
       systemTray.setImage(ImageResources.CAST_DISABLED_ICON);
       systemTray.setStatus("Screencast disabled");
     }
+
+    systemTray.setTooltip(systemTray.getStatus());
   }
 
   static class ImageResources {

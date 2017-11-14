@@ -18,6 +18,11 @@ public class ScreenCasterProperties {
      * Controls whether screen casting should start immediately after program start. Defaults to {@literal true}.
      */
     private boolean autoStart = true;
+
+    /**
+     * Controls whether the mouse pointer should be visible. Defaults to {@literal true}.
+     */
+    private boolean mouseVisible = true;
   }
 
   @Data

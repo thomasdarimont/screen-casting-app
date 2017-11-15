@@ -65,3 +65,7 @@ html, body { /* Removes unnecessary borders */
 .modal-title {
   display: inline;
 }
+
+.screen-cast-url {
+  color: #f3f;
+}

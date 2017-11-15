@@ -56,7 +56,7 @@
       <div class="col-md-3"></div>
       <div id="castInfo" th:if="${isCaster}" class="col-md-6">
         <h1>Screencast</h1>
-        <h2>URL: <span th:text="${screencastUrl}"/></h2>
+        <h1 th:text="${screencastUrl}" class="screen-cast-url">http://localhost:9999</h1>
         <p>Status: <span id="screenCastStatus" th:text="${settings.castEnabled} ? 'active' : 'not active'">active</span>
         </p>
       </div>

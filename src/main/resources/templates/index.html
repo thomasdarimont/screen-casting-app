@@ -17,27 +17,8 @@
   <link rel="stylesheet" href="css/app.css"/>
   <script src="/webjars/bootstrap/js/bootstrap.min.js"></script>
   <link rel="stylesheet" href="/webjars/bootstrap/css/bootstrap.min.css"/>
-
-  <script src="js/app.js"></script>
 </head>
 <body th:with="isWatcher = (${requestType} == 'watcher'), isCaster = (${requestType} == 'caster')">
-
-<script th:if="${isCaster}">
-
-  $(document).ready(function () {
-    //disable local notifications
-    screenCaster.notificationStatus.enabled = false;
-  });
-</script>
-
-<script th:inline="javascript">
-  /*<![CDATA[*/
-  $(document).ready(function () {
-    screenCaster.enabled = /*[[${settings.castEnabled}]]*/;
-  });
-  /*]]>*/
-</script>
-
 <main>
 
   <button id="btnShowNotes" type="button" class="btn btn-info btn-lg" data-toggle="modal"
@@ -70,7 +51,7 @@
       <div class="modal-header panel-heading">
         <button type="button" class="close" data-dismiss="modal" title="Close">&times;</button>
         <h2 class="modal-title">Notes
-          <button onclick="scrollToLatestNote()"
+          <button onclick="screenCaster.scrollToLatestNote()"
                   class="btn btn-default btn-show-latest-note"
                   title="Show latest note"><span
             class="glyphicon glyphicon-chevron-down"></span>
@@ -87,7 +68,7 @@
         <form id="notesForm" action="/notes" method="post" th:if="${isCaster}">
 
           <button type="submit"
-                  onclick="updateNote(event)"
+                  onclick="screenCaster.updateNote(event)"
                   name="action"
                   value="deleteAll"
                   class="glyphicon glyphicon-trash pull-right"
@@ -117,7 +98,7 @@
 </main>
 <script id="note-template" type="x-tmpl-mustache">
   <li data-note-id="{{id}}" class="list-group-item">
-    <div class="note new" onmouseover="markNoteAsRead(this)">
+    <div class="note new" onmouseover="screenCaster.markNoteAsRead(this)">
       <p><span>#{{id}} </span>{{{text}}}</p>
       <div>
         <ul class="list-inline">
@@ -125,7 +106,7 @@
           <span class="new-note-marker glyphicon glyphicon-asterisk"/>
           <form class="note-actions" action="/notes/{{id}}" onsubmit="return false;" th:if="${isCaster}">
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" class="csrf" />
-            <button type="submit" onclick="updateNote(event)" name="action" value="delete"
+            <button type="submit" onclick="screenCaster.updateNote(event)" name="action" value="delete"
                     class="glyphicon glyphicon-trash" title="Delete note {{id}}"/>
           </form>
         </ul>
@@ -133,5 +114,24 @@
     </div>
   </li>
 </script>
+
+<script src="js/app.js"></script>
+
+<script th:inline="javascript">
+  /*<![CDATA[*/
+  $(document).ready(function () {
+
+    screenCaster = new ScreenCaster({
+      watcher:  /*[[${isWatcher}]]*/,
+      enabled: /*[[${settings.castEnabled}]]*/
+    });
+
+    screenCaster.init();
+
+    screenCaster.start();
+  });
+  /*]]>*/
+</script>
+
 </body>
 </html>

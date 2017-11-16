@@ -22,6 +22,7 @@ html, body { /* Removes unnecessary borders */
 
 #screenContainer {
   text-align: center;
+  position: relative;
 }
 
 .screen-fit {
@@ -39,6 +40,7 @@ html, body { /* Removes unnecessary borders */
   top: 15px;
   left: 15px;
   opacity: 0.25;
+  z-index: 1000;
 }
 
 #btnShowNotes:hover {
@@ -68,4 +70,14 @@ html, body { /* Removes unnecessary borders */
 
 .screen-cast-url {
   color: #f3f;
+}
+
+#overlay {
+  position: absolute;
+  right: 0;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height:100%;
 }

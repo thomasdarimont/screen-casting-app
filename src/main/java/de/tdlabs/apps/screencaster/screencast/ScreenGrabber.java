@@ -12,14 +12,12 @@ class ScreenGrabber {
 
   private final Robot robot;
   private final Rectangle screenRect;
-  private final boolean showMouse;
 
   public ScreenGrabber(ScreenCasterProperties screenCastProperties) {
 
     ScreenGrabbingProperties screenGrabbingProperties = screenCastProperties.getGrabbing();
     GraphicsDevice screen = selectScreenDevice(screenGrabbingProperties);
     this.screenRect = getScreenRectangle(screen);
-    this.showMouse = screenCastProperties.getScreencast().isMouseVisible();
 
     try {
       this.robot = new Robot(screen);
@@ -55,21 +53,6 @@ class ScreenGrabber {
   }
 
   private BufferedImage grab(Rectangle screenRect) {
-
-    BufferedImage screenCapture = robot.createScreenCapture(screenRect);
-
-    if (showMouse) {
-      drawMousePointer(screenCapture);
-    }
-
-    return screenCapture;
-  }
-
-  private void drawMousePointer(BufferedImage screenCapture) {
-
-    Point location = MouseInfo.getPointerInfo().getLocation();
-    Graphics2D g = screenCapture.createGraphics();
-    g.setColor(Color.MAGENTA);
-    g.fillOval((int) location.getX(), (int) location.getY(), 32, 32);
+    return robot.createScreenCapture(screenRect);
   }
 }

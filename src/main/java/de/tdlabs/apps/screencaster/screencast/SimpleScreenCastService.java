@@ -1,8 +1,10 @@
 package de.tdlabs.apps.screencaster.screencast;
 
 import de.tdlabs.apps.screencaster.ScreenCasterProperties;
+import de.tdlabs.apps.screencaster.config.WebsocketDestinations;
 import de.tdlabs.apps.screencaster.settings.SettingsService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -26,7 +28,11 @@ class SimpleScreenCastService implements ScreenCastService {
 
   private final ScreenCasterProperties screenCasterProperties;
 
+  private final SimpMessagingTemplate messagingTemplate;
+
   private final AtomicReference<LiveImage> currentImage = new AtomicReference<>();
+
+  private final AtomicReference<Point> currentLocation = new AtomicReference<>();
 
   @Scheduled(fixedDelayString = "#{${screencaster.refreshIntervalMillis:-1}}")
   void updateImage() {
@@ -37,6 +43,20 @@ class SimpleScreenCastService implements ScreenCastService {
     }
 
     useLiveImage();
+  }
+
+  @Scheduled(fixedDelayString = "#{${screencaster.refreshPointerMillis:-1}}")
+  void updatePointerLocation() {
+
+    Point location = MouseInfo.getPointerInfo().getLocation();
+
+    Point curLoc = currentLocation.get();
+    if (curLoc != null && curLoc.equals(location)) {
+      return;
+    }
+    currentLocation.set(location);
+
+    messagingTemplate.convertAndSend(WebsocketDestinations.TOPIC_POINTER, location);
   }
 
   private void useLiveImage() {

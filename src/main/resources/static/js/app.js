@@ -63,6 +63,7 @@ function initResizeTools(screenCaster) {
 }
 
 function createScreenCaster() {
+
   return window.screenCaster = {
     enabled: true,
     showUpdates: true,
@@ -70,6 +71,7 @@ function createScreenCaster() {
       enabled: false,
     },
     $screenImage: $("#screen")[0],
+    $overlay: $("#overlay")[0]
   };
 }
 
@@ -92,6 +94,21 @@ function startScreenCast() {
       return;
     }
 
+    if (!screenCaster.casterScreenDimensions) {
+
+      // resize canvas...
+      var cvs = screenCaster.$overlay;
+      var img = screenCaster.$screenImage;
+
+      screenCaster.casterScreenDimensions = {
+        w: img.naturalWidth,
+        h: img.naturalHeight
+      };
+
+      cvs.width = img.width;
+      cvs.height = img.height;
+    }
+
     setTimeout(refreshImage, screenUpdateInterval);
   };
 
@@ -111,6 +128,7 @@ function startScreenCast() {
 
 var stompClient = null;
 var screenUpdateInterval = 250;
+var currentPointerLocation;
 
 function initWebSocketConnection() {
   var socket = new SockJS("/screencaster/ws");
@@ -126,7 +144,16 @@ function initWebSocketConnection() {
     stompClient.subscribe("/topic/settings", function (settingsMessage) {
       onSettingsEvent(JSON.parse(settingsMessage.body));
     });
+
+    stompClient.subscribe("/topic/pointer", function (pointerMessage) {
+      onPointerEvent(JSON.parse(pointerMessage.body));
+    });
   });
+}
+
+function onPointerEvent(pointerEvent) {
+  // console.log(pointerEvent);
+  currentPointerLocation = pointerEvent;
 }
 
 function onSettingsEvent(settingsEvent) {
@@ -254,22 +281,7 @@ function loadNotes() {
   });
 }
 
-function initScreenCaster() {
-
-  initWebSocketConnection();
-
-  initScreenVisibilityHandling();
-
-  var screenCaster = createScreenCaster();
-  initNotifications(screenCaster);
-
-  if (screenCaster.$screenImage) {
-    initResizeTools(screenCaster);
-    startScreenCast(screenCaster);
-  }
-
-  loadNotes();
-
+function setupNotesForm() {
   $("#notesForm").submit(function (event) {
 
     event.preventDefault();
@@ -286,6 +298,77 @@ function initScreenCaster() {
 
     $(this).get(0).reset();
   });
+}
+
+function initScreenCaster() {
+
+  initWebSocketConnection();
+
+  var screenCaster = createScreenCaster();
+
+  if (screenCaster.$screenImage) {
+    initScreenVisibilityHandling();
+    initNotifications(screenCaster);
+    initResizeTools(screenCaster);
+    startScreenCast(screenCaster);
+    startPointerAnimation();
+  }
+
+  loadNotes();
+  setupNotesForm();
+}
+
+function startPointerAnimation() {
+
+  requestAnimationFrame(renderLoop);
+
+  var startTime = Date.now();
+  var pulseDuration = 1.45;
+
+  function renderLoop() {
+
+    if (currentPointerLocation && screenCaster.casterScreenDimensions) {
+
+      var time = (Date.now() - startTime) / 1000.0;
+
+      var pulseCompletion = (time % pulseDuration) / pulseDuration;
+
+      var img = screenCaster.$screenImage;
+      var cvs = screenCaster.$overlay;
+
+      var context = cvs.getContext('2d');
+      context.globalAlpha = 0.95;
+
+      context.clearRect(0, 0, cvs.width, cvs.height);
+
+      var fw = cvs.width / screenCaster.casterScreenDimensions.w;
+      var fh = cvs.height / screenCaster.casterScreenDimensions.h;
+
+      var centerX = cvs.width / 2;
+      var centerY = cvs.height / 2;
+      var radius = 4;
+
+      context.beginPath();
+      context.arc(currentPointerLocation.x * fw, currentPointerLocation.y * fh, radius, 0, 2 * Math.PI, false);
+      context.fillStyle = 'magenta';
+      context.fill();
+
+      // context.lineWidth = 1.0;
+      // context.strokeStyle = 'black';
+      // context.globalAlpha = 0.5;
+      // context.stroke();
+
+      context.beginPath();
+      context.arc(currentPointerLocation.x * fw, currentPointerLocation.y * fh, radius + pulseCompletion * 10, 0, 2 * Math.PI, false);
+
+      context.lineWidth = 1;
+      context.strokeStyle = 'magenta';
+      context.globalAlpha = 1 - pulseCompletion;
+      context.stroke();
+    }
+
+    requestAnimationFrame(renderLoop);
+  }
 }
 
 $(document).ready(initScreenCaster);

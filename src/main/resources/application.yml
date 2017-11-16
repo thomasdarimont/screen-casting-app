@@ -23,3 +23,5 @@ screencaster:
   refreshIntervalMillis: 250
   refreshPointerMillis: 150
   database: default
+  fileStore:
+    location: data

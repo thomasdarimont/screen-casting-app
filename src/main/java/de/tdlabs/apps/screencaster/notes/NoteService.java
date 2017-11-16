@@ -4,13 +4,13 @@ import java.util.List;
 
 public interface NoteService {
 
-  Note save(Note note);
+  NoteEntity save(NoteEntity note);
 
-  Note findById(Long id);
+  NoteEntity findById(Long id);
 
-  List<Note> findAll();
+  List<NoteEntity> findAll();
 
-  void delete(Note note);
+  void delete(NoteEntity note);
 
   void deleteAll();
 }

@@ -234,28 +234,56 @@ function ScreenCaster(config) {
         return;
       }
 
-      //access data directly
       for (var i = 0; i < items.length; i++) {
-        if (items[i].type.indexOf("image") !== -1) {
-          //image
-          var blob = items[i].getAsFile();
 
-          var fileReader = new FileReader();
-          fileReader.onloadend = function () {
-            // console.log(fileReader.result);
+        var currentItem = items[i];
+        if (currentItem.type.indexOf("image") !== -1) {
+          var blob = currentItem.getAsFile();
 
-            this.storeNote({
-              text: "![](" + fileReader.result + ")"
-            })
-          }.bind(this);
-          fileReader.readAsDataURL(blob);
+          var f = (function (currentItem) {
+
+            this.uploadFile({
+              filename: "Screenshot " + moment(Date.now()).format("DD-MM-YY_HH-mm-ss"),
+              data: blob,
+              contentType: currentItem.type
+            }, function (fileInfo) {
+
+              if (!fileInfo) {
+                return;
+              }
+
+              this.storeNote({
+                text: "### " + fileInfo.name + "\n" +
+                "![Screenshot](/files/" + fileInfo.id + ")"
+              });
+            }.bind(this));
+
+          }).bind(this);
+
+          f(currentItem);
         }
       }
       evt.preventDefault();
-
     }
 
     document.addEventListener('paste', onPaste.bind(this), false);
+  }.bind(this);
+
+  this.uploadFile = function uploadFile(fileData, callback) {
+
+    var data = new FormData();
+    data.append('file', fileData.data, fileData.filename);
+
+    $.ajax({
+      url: "/files",
+      type: "post",
+      enctype: 'multipart/form-data',
+      data: data,
+      processData: false,
+      contentType: false,
+      headers: this.headers,
+      success: callback
+    });
   }.bind(this);
 
   this.initScreenVisibilityHandling = function initScreenVisibilityHandling() {

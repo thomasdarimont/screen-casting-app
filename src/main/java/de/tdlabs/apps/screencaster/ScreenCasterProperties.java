@@ -11,6 +11,8 @@ public class ScreenCasterProperties {
 
   private ScreencastProperties screencast = new ScreencastProperties();
 
+  private FileStoreProperties fileStore = new FileStoreProperties();
+
   @Data
   public static class ScreencastProperties {
 
@@ -45,5 +47,11 @@ public class ScreenCasterProperties {
     public boolean isGrabDefaultScreen() {
       return screenNo == DEFAULT_SCREEN;
     }
+  }
+
+  @Data
+  public static class FileStoreProperties {
+
+    private String location;
   }
 }

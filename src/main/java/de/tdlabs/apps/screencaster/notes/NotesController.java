@@ -16,6 +16,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
 import java.util.List;
 
+import static java.util.stream.Collectors.toList;
+
 @RestController
 @RequestMapping("/notes")
 @RequiredArgsConstructor
@@ -25,9 +27,9 @@ class NotesController {
 
   @PreAuthorize("#request.getRemoteAddr().equals(#request.getLocalAddr())")
   @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_FORM_URLENCODED_VALUE})
-  ResponseEntity<Note> createNote(Note note, UriComponentsBuilder uriBuilder, HttpServletRequest request) {
+  ResponseEntity<?> createNote(Note note, UriComponentsBuilder uriBuilder, HttpServletRequest request) {
 
-    Note saved = noteService.save(note);
+    NoteEntity saved = noteService.save(NoteEntity.valueOf(note));
     URI location = uriBuilder.path("/notes/{id}").buildAndExpand(saved.getId()).toUri();
 
     return ResponseEntity.created(location).build();
@@ -35,12 +37,17 @@ class NotesController {
 
   @GetMapping
   ResponseEntity<List<Note>> findAll() {
-    return ResponseEntity.ok(noteService.findAll());
+    return ResponseEntity.ok(
+      noteService.findAll()
+        .stream()
+        .map(NoteEntity::toNote)
+        .collect(toList())
+    );
   }
 
   @DeleteMapping
   @PreAuthorize("#request.getRemoteAddr().equals(#request.getLocalAddr())")
-  ResponseEntity<Note> deleteAll(HttpServletRequest request) {
+  ResponseEntity<?> deleteAll(HttpServletRequest request) {
 
     noteService.deleteAll();
     return ResponseEntity.noContent().build();
@@ -48,14 +55,14 @@ class NotesController {
 
   @GetMapping("/{id}")
   ResponseEntity<Note> findById(@PathVariable("id") Long id) {
-    return ResponseEntity.ok(noteService.findById(id));
+    return ResponseEntity.ok(noteService.findById(id).toNote());
   }
 
   @DeleteMapping("/{id}")
   @PreAuthorize("#request.getRemoteAddr().equals(#request.getLocalAddr())")
-  ResponseEntity<Note> delete(@PathVariable("id") Long id, HttpServletRequest request) {
+  ResponseEntity<?> delete(@PathVariable("id") Long id, HttpServletRequest request) {
 
-    Note note = noteService.findById(id);
+    NoteEntity note = noteService.findById(id);
     if (note == null) {
       return ResponseEntity.notFound().build();
     }

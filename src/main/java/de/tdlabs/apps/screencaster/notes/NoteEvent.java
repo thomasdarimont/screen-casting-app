@@ -8,17 +8,17 @@ public interface NoteEvent {
     return getClass().getSimpleName().toLowerCase();
   }
 
-  static NoteEvent created(Note note) {
+  static NoteEvent created(NoteEntity note) {
     return new Created(note);
   }
 
-  static NoteEvent deleted(Note note) {
+  static NoteEvent deleted(NoteEntity note) {
     return new Deleted(note.getId());
   }
 
   @Data
   class Created implements NoteEvent {
-    final Note note;
+    final NoteEntity note;
   }
 
   @Data

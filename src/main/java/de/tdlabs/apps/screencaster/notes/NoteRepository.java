@@ -4,7 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-interface NoteRepository extends JpaRepository<Note, Long> {
+interface NoteRepository extends JpaRepository<NoteEntity, Long> {
 
-  List<Note> findAllByOrderByCreatedAtAsc();
+  List<NoteEntity> findAllByOrderByCreatedAtAsc();
 }

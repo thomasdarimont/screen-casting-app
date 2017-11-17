@@ -234,35 +234,33 @@ function ScreenCaster(config) {
         return;
       }
 
-      for (var i = 0; i < items.length; i++) {
-
-        var currentItem = items[i];
-        if (currentItem.type.indexOf("image") !== -1) {
-          var blob = currentItem.getAsFile();
-
-          var f = (function (currentItem) {
-
-            this.uploadFile({
-              filename: "Screenshot " + moment(Date.now()).format("DD-MM-YY_HH-mm-ss"),
-              data: blob,
-              contentType: currentItem.type
-            }, function (fileInfo) {
-
-              if (!fileInfo) {
-                return;
-              }
-
-              this.storeNote({
-                text: "### " + fileInfo.name + "\n" +
-                "![Screenshot](/files/" + fileInfo.id + ")"
-              });
-            }.bind(this));
-
-          }).bind(this);
-
-          f(currentItem);
-        }
+      if (items.length === 0) {
+        return;
       }
+
+      var currentItem = items[0];
+      if (currentItem.type.indexOf("image") === -1) {
+        return;
+      }
+
+      var blob = currentItem.getAsFile();
+
+      this.uploadFile({
+        filename: "Screenshot " + moment(Date.now()).format("DD-MM-YY_HH-mm-ss"),
+        data: blob,
+        contentType: currentItem.type
+      }, function (fileInfo) {
+
+        if (!fileInfo) {
+          return;
+        }
+
+        this.storeNote({
+          text: "### " + fileInfo.name + "\n" +
+          "![Screenshot](/files/" + fileInfo.id + ")"
+        });
+      }.bind(this));
+
       evt.preventDefault();
     }
 
@@ -345,11 +343,18 @@ function ScreenCaster(config) {
 
   this.initResizeTools = function initResizeTools() {
 
-    this.$screenImage.onclick = function (evt) {
-      $(evt.targetElement).toggleClass("screen-fit")
+    // TODO fix resizing
+
+    $("#screenContainer").onclick = function (evt) {
+      $(this.$screenImage).toggleClass("screen-fit")
     };
   }.bind(this);
 
+  /**
+   * Starts the screenshot fetching
+   *
+   * @type {any}
+   */
   this.startScreenCast = function startScreenCast() {
 
     if ("URLSearchParams" in window) {
@@ -398,6 +403,9 @@ function ScreenCaster(config) {
     setTimeout(refreshImage.bind(this), this.screenUpdateInterval);
   }.bind(this);
 
+  /**
+   * Renders the remote mouse pointer
+   */
   this.startPointerAnimation = function startPointerAnimation() {
 
     requestAnimationFrame(renderLoop.bind(this));
@@ -423,20 +431,20 @@ function ScreenCaster(config) {
 
         context.clearRect(0, 0, cvs.width, cvs.height);
 
-        var fw = cvs.width / screenDimensions.w;
-        var fh = cvs.height / screenDimensions.h;
+        var scalingW = cvs.width / screenDimensions.w;
+        var scalingH = cvs.height / screenDimensions.h;
 
         var centerX = cvs.width / 2;
         var centerY = cvs.height / 2;
         var radius = 4;
 
         context.beginPath();
-        context.arc(pointerLocation.x * fw, pointerLocation.y * fh, radius, 0, 2 * Math.PI, false);
+        context.arc(pointerLocation.x * scalingW, pointerLocation.y * scalingH, radius, 0, 2 * Math.PI, false);
         context.fillStyle = 'magenta';
         context.fill();
 
         context.beginPath();
-        context.arc(pointerLocation.x * fw, pointerLocation.y * fh, radius + pulseCompletion * 10, 0, 2 * Math.PI, false);
+        context.arc(pointerLocation.x * scalingW, pointerLocation.y * scalingH, radius + pulseCompletion * 10, 0, 2 * Math.PI, false);
 
         context.lineWidth = 1;
         context.strokeStyle = 'magenta';

@@ -89,3 +89,6 @@ html, body { /* Removes unnecessary borders */
   max-height: 100%;
 }
 
+button.close {
+  font-size: 42px;
+}

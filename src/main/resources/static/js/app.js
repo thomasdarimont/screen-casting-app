@@ -16,7 +16,8 @@ function ScreenCaster(config) {
     this.headers["X-CSRF-TOKEN"] = $("meta[name=csrf]").attr("value");
 
     this.initWebSocketConnection();
-    this.loadNotes();
+
+    this.initNotes();
 
     if (this.watcher) {
       this.initScreenCast();
@@ -27,6 +28,13 @@ function ScreenCaster(config) {
     this.setupNotesForm();
     this.initClipboardSupport();
   };
+
+  this.initNotes = function initNotes() {
+
+    this.loadNotes();
+
+    $('#notesListContainer').perfectScrollbar();
+  }.bind(this);
 
   this.initScreenCast = function initScreenCast() {
 

@@ -1,6 +1,5 @@
 package de.tdlabs.apps.screencaster.notes;
 
-import de.tdlabs.apps.screencaster.filestore.FileInfo;
 import lombok.Data;
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -17,6 +16,4 @@ class Note {
   LocalDateTime createdAt;
 
   LocalDateTime updatedAt;
-
-  FileInfo fileInfo;
 }

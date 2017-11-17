@@ -1,6 +1,5 @@
 package de.tdlabs.apps.screencaster.notes;
 
-import de.tdlabs.apps.screencaster.filestore.FileEntity;
 import lombok.Data;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.data.annotation.CreatedDate;
@@ -12,7 +11,6 @@ import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
 
@@ -36,9 +34,6 @@ public class NoteEntity {
   @LastModifiedDate
   LocalDateTime updatedAt;
 
-  @ManyToOne
-  FileEntity file;
-
   public static NoteEntity valueOf(Note note) {
     NoteEntity ne = new NoteEntity();
     ne.setText(note.getText());
@@ -52,7 +47,6 @@ public class NoteEntity {
     n.setId(getId());
     n.setCreatedAt(getCreatedAt());
     n.setUpdatedAt(getUpdatedAt());
-    n.setFileInfo(file != null ? file.toInfo() : null);
 
     return n;
   }

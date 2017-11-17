@@ -19,24 +19,30 @@ class SimpleNoteService implements NoteService {
 
   private final MarkdownFormatter markdownFormatter;
 
-  public NoteEntity save(NoteEntity note) {
+  public NoteEntity save(NoteEntity noteEntity) {
 
-    String rendered = markdownFormatter.format(note.getText());
-    note.setText(rendered);
-    NoteEntity saved = noteRepository.save(note);
-    this.messagingTemplate.convertAndSend(WebsocketDestinations.TOPIC_NOTES, NoteEvent.created(saved));
+    boolean newNote = noteEntity.isNew();
+
+    noteEntity.setHtml(markdownFormatter.format(noteEntity.getText()));
+    NoteEntity saved = noteRepository.save(noteEntity);
+
+    Note note = noteEntity.toNote();
+
+    NoteEvent noteEvent = newNote ? NoteEvent.created(note) : NoteEvent.updated(note);
+
+    this.messagingTemplate.convertAndSend(WebsocketDestinations.TOPIC_NOTES, noteEvent);
 
     return saved;
   }
 
-  public void delete(NoteEntity note) {
+  public void delete(NoteEntity noteEntity) {
 
-    noteRepository.delete(note);
-    this.messagingTemplate.convertAndSend("/topic/notes", NoteEvent.deleted(note));
+    noteRepository.delete(noteEntity);
+    this.messagingTemplate.convertAndSend("/topic/notes", NoteEvent.deleted(noteEntity.toNote()));
   }
 
   public void deleteAll() {
-    noteRepository.deleteAll();
+    noteRepository.deleteAllInBatch();
   }
 
   @Transactional(readOnly = true)

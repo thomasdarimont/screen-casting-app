@@ -101,7 +101,7 @@
 <script id="note-template" type="x-tmpl-mustache">
   <li data-note-id="{{id}}" class="list-group-item">
     <div class="note new" onmouseover="screenCaster.markNoteAsRead(this)">
-      <p><span>&#35;</span><span> {{id}} </span>{{{text}}}</p>
+      <p><span>&#35;</span><span> {{id}} </span>{{{html}}}</p>
       <div>
         <ul class="list-inline">
           <span class="note-time">{{createdAtHuman}} </span>
@@ -110,16 +110,13 @@
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" class="csrf" />
             <button type="submit" onclick="screenCaster.updateNote(event)" name="action" value="delete"
                     class="glyphicon glyphicon-trash" title="Delete note {{id}}"/>
+            <button type="submit" onclick="screenCaster.updateNote(event)" name="action" value="edit"
+                    class="glyphicon glyphicon-pencil" title="Edit note {{id}}"/>
           </form>
         </ul>
       </div>
     </div>
   </li>
-
-
-
-
-
 
 </script>
 

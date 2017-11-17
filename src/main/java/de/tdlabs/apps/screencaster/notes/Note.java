@@ -11,6 +11,8 @@ class Note {
   Long id;
 
   @NotEmpty
+  String html;
+
   String text;
 
   LocalDateTime createdAt;

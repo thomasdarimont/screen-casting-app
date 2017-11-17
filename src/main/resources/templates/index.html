@@ -89,9 +89,7 @@
       </div>
 
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal" title="Close">Close</button>
       </div>
-
     </div>
   </div>
 
@@ -99,7 +97,7 @@
 <script id="note-template" type="x-tmpl-mustache">
   <li data-note-id="{{id}}" class="list-group-item">
     <div class="note new" onmouseover="screenCaster.markNoteAsRead(this)">
-      <p><span>#{{id}} </span>{{{text}}}</p>
+      <p><span>&#35;</span><span> {{id}} </span>{{{text}}}</p>
       <div>
         <ul class="list-inline">
           <span class="note-time">{{createdAtHuman}} </span>
@@ -113,6 +111,10 @@
       </div>
     </div>
   </li>
+
+
+
+
 </script>
 
 <script src="js/app.js"></script>

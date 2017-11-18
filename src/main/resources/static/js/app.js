@@ -33,7 +33,7 @@ function ScreenCaster(config) {
 
     this.loadNotes();
 
-    $('#notesListContainer').perfectScrollbar();
+    // $('#notesListContainer').perfectScrollbar();
   }.bind(this);
 
   this.initScreenCast = function initScreenCast() {
@@ -108,6 +108,8 @@ function ScreenCaster(config) {
 
     if (noteEvent.type === "created") {
 
+      console.log("note created", noteEvent);
+
       this.addNote(noteEvent.note);
 
       this.scrollToLatestNote();
@@ -124,7 +126,11 @@ function ScreenCaster(config) {
       }
 
     } else if (noteEvent.type === "deleted") {
+      console.log("note deleted", noteEvent);
       $("li[data-note-id='" + noteEvent.noteId + "']").remove();
+    } else if (noteEvent.type === "updated") {
+      console.log("note updated", noteEvent);
+      $("[data-note-id='" + noteEvent.note.id + "'] .note-content").html(noteEvent.html);
     }
 
     this.updateUnreadNotesCount();
@@ -135,6 +141,9 @@ function ScreenCaster(config) {
     var template = $('#note-template').html();
     Mustache.parse(template);   // optional, speeds up future uses
 
+    // hack to wrap element in span
+
+    note.html = "<span class=\"note-content\">" + note.html + "</span>";
     note.createdAtHuman = moment(note.createdAt).format("DD.MM.YY HH:mm:ss");
 
     var rendered = Mustache.render(template, note).trim();

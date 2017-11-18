@@ -101,7 +101,7 @@
 <script id="note-template" type="x-tmpl-mustache">
   <li data-note-id="{{id}}" class="list-group-item">
     <div class="note new" onmouseover="screenCaster.markNoteAsRead(this)">
-      <p><span>&#35;</span><span> {{id}} </span>{{{html}}}</p>
+      <span>&#35;</span><span> {{id}} </span>{{{html}}}
       <div>
         <ul class="list-inline">
           <span class="note-time">{{createdAtHuman}} </span>
@@ -117,7 +117,6 @@
       </div>
     </div>
   </li>
-
 </script>
 
 <script src="js/app.js"></script>

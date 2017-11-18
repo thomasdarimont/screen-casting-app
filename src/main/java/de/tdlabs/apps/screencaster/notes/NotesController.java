@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -33,6 +34,22 @@ class NotesController {
     URI location = uriBuilder.path("/notes/{id}").buildAndExpand(saved.getId()).toUri();
 
     return ResponseEntity.created(location).build();
+  }
+
+
+  @PreAuthorize("#request.getRemoteAddr().equals(#request.getLocalAddr())")
+  @PutMapping(path = "/{id}", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_FORM_URLENCODED_VALUE})
+  ResponseEntity<?> updateNote(@PathVariable("id") Long id, Note note, UriComponentsBuilder uriBuilder, HttpServletRequest request) {
+
+    NoteEntity stored = noteService.findById(id);
+    if (stored == null) {
+      return ResponseEntity.notFound().build();
+    }
+
+    stored.setText(note.getText());
+
+    stored = noteService.save(stored);
+    return ResponseEntity.ok(stored.toNote());
   }
 
   @GetMapping

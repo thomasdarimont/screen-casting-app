@@ -128,9 +128,17 @@ function ScreenCaster(config) {
     } else if (noteEvent.type === "deleted") {
       console.log("note deleted", noteEvent);
       $("li[data-note-id='" + noteEvent.noteId + "']").remove();
+
     } else if (noteEvent.type === "updated") {
       console.log("note updated", noteEvent);
-      $("[data-note-id='" + noteEvent.note.id + "'] .note-content").html(noteEvent.html);
+
+      var $noteContent = $("span[data-note-id='" + noteEvent.note.id + "'].note-content");
+      $noteContent.html(noteEvent.note.html);
+      $noteContent.show();
+
+      var $rawContent = $("textarea[data-note-id='" + noteEvent.note.id + "'].raw-content");
+      $rawContent.text(noteEvent.note.text);
+      $rawContent.hide();
     }
 
     this.updateUnreadNotesCount();
@@ -143,7 +151,7 @@ function ScreenCaster(config) {
 
     // hack to wrap element in span
 
-    note.html = "<span class=\"note-content\">" + note.html + "</span>";
+    note.html = "<span data-note-id=\"" + note.id + "\" class=\"note-content\">" + note.html + "</span>";
     note.createdAtHuman = moment(note.createdAt).format("DD.MM.YY HH:mm:ss");
 
     var rendered = Mustache.render(template, note).trim();
@@ -155,11 +163,17 @@ function ScreenCaster(config) {
     $("#unreadNotesCounter").text($(".note.new").length);
   };
 
-  this.updateNote = function updateNote(event) {
+  this.onNoteAction = function onNoteAction(event) {
 
     event.preventDefault();
 
-    if (event.currentTarget.value === 'delete') {
+    let button = event.currentTarget;
+    var noteId = $(button.parentElement).data("note-id");
+
+    var $rawContent = $("textarea[data-note-id='" + noteId + "'].raw-content");
+    var $noteContent = $("span[data-note-id='" + noteId + "'].note-content");
+
+    if (button.value === 'delete') {
 
       $.ajax({
         url: $(event.target.form).attr("action"),
@@ -169,14 +183,9 @@ function ScreenCaster(config) {
         console.log("note deleted");
       });
 
-      return;
-    }
+    } else if (button.value === 'deleteAll') {
 
-    if (event.currentTarget.value === 'deleteAll') {
-
-      var proceed = window.confirm("Delete all notes?");
-
-      if (!proceed) {
+      if (!window.confirm("Delete all notes?")) {
         return;
       }
 
@@ -189,6 +198,38 @@ function ScreenCaster(config) {
 
         $("li[data-note-id]").remove();
       });
+    } else if (button.value === 'edit') {
+      console.log("edit", button);
+
+      $noteContent.hide();
+
+      $rawContent.data("text-backup", $rawContent.text());
+      $rawContent.show();
+
+      $(button.parentElement).find("button[name='actionUpdate']").show()
+      $(button.parentElement).find("button[name='actionReset']").show()
+    } else if (button.value === 'update') {
+
+      var note = {
+        id: noteId,
+        text: $rawContent.val()
+      };
+
+      this.updateNote(note);
+
+      $(button.parentElement).find("button[name='actionUpdate']").hide();
+      $(button.parentElement).find("button[name='actionReset']").hide();
+
+    } else if (button.value === 'reset') {
+
+      $rawContent.val($rawContent.data("text-backup"));
+      $rawContent.data("text-backup", null);
+
+      $(button.parentElement).find("button[name='actionUpdate']").hide();
+      $(button.parentElement).find("button[name='actionReset']").hide();
+
+      $noteContent.show();
+      $rawContent.hide();
     }
   }.bind(this);
 
@@ -231,6 +272,18 @@ function ScreenCaster(config) {
     $.ajax({
       url: "/notes",
       type: "post",
+      data: note,
+      headers: this.headers
+    }).done(function (response) { //
+      // console.log(response);
+    });
+  }.bind(this);
+
+  this.updateNote = function updateNote(note) {
+
+    $.ajax({
+      url: "/notes/" + note.id,
+      type: "put",
       data: note,
       headers: this.headers
     }).done(function (response) { //

@@ -31,7 +31,7 @@ html, body { /* Removes unnecessary borders */
 }
 
 .modal-dialog {
-  width: 60% !important;
+  width: 80% !important;
   background-color: #ffffff;
   border: 1px solid #f3f;
 }

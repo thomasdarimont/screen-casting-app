@@ -33,7 +33,7 @@ html, body { /* Removes unnecessary borders */
 .modal-dialog {
   width: 80% !important;
   background-color: #ffffff;
-  border: 1px solid #f3f;
+  border: 1px solid grey;
 }
 
 #btnShowNotes {
@@ -51,11 +51,17 @@ html, body { /* Removes unnecessary borders */
 #notesListContainer {
   max-height: 500px;
   overflow-y: auto;
+  position: relative;
+  padding-right: 15px;
 }
 
 #notesList li img {
   max-width: 100%;
   max-height: 100%;
+}
+
+#notesList {
+  margin-bottom: 0px;
 }
 
 .note-time {

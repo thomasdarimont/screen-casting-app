@@ -110,7 +110,6 @@
         <hr class="note-section-separator"/>
         <ul class="list-inline">
           <form class="note-actions" action="/notes/{{id}}" onsubmit="return false;" th:if="${isCaster}" data-note-id="{{id}}">
-            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" class="csrf" />
             <button type="submit" onclick="screenCaster.onNoteAction(event)" name="actionDelete" value="delete"
                     class="btn btn-default glyphicon glyphicon-trash" title="Delete note {{id}}"/>
             <button type="submit" onclick="screenCaster.onNoteAction(event)" name="actionEdit" value="edit"

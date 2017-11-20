@@ -14,10 +14,17 @@ spring:
       ddl-auto: update
 
 server:
-  port: 9999
+  port: 8443
   compression:
     enabled: true
     mime-types: application/json,application/xml,text/html,text/xml,text/plain,text/css,application/javascript,image/jpeg,image/png
+
+  ssl:
+# $JAVA_HOME/bin/keytool -genkey -alias euler -keyalg RSA -keypass changeit -storepass changeit -keystore ./keystore.jks
+    key-store: data/keystore.jks
+    key-store-password: changeit
+    key-password: changeit
+    protocol: TLSv1.2
 
 screencaster:
   refreshIntervalMillis: 250

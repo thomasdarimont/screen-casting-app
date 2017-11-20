@@ -1,10 +1,14 @@
 package de.tdlabs.apps.screencaster;
 
+import de.tdlabs.apps.screencaster.web.support.JettyHttp2Customizer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.web.ServerProperties;
+import org.springframework.boot.context.embedded.EmbeddedServletContainerCustomizer;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.event.EventListener;
 
 import java.net.InetAddress;
@@ -22,6 +26,11 @@ public class App {
     System.setProperty("java.awt.headless", "false");
 
     SpringApplication.run(App.class, args);
+  }
+
+  @Bean
+  public EmbeddedServletContainerCustomizer jettyHttp2Customizer(ServerProperties serverProperties) {
+    return new JettyHttp2Customizer(serverProperties);
   }
 
   @EventListener

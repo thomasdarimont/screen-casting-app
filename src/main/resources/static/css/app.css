@@ -55,6 +55,15 @@ html, body { /* Removes unnecessary borders */
   padding-right: 15px;
 }
 
+#notesList li {
+  margin-bottom: 20px;
+  border-radius: 5px;
+}
+
+#notesList li:last-child {
+  margin-bottom: 0px;
+}
+
 #notesList li img {
   max-width: 100%;
   max-height: 100%;
@@ -66,6 +75,7 @@ html, body { /* Removes unnecessary borders */
 
 .note-time {
   color: #999;
+  float: right;
 }
 
 .note.read span.new-note-marker {
@@ -74,6 +84,11 @@ html, body { /* Removes unnecessary borders */
 
 .note.new .new-note-marker {
   color: #f3f;
+}
+
+.note-section-separator {
+  margin-top: 5px;
+  margin-bottom: 5px;
 }
 
 .modal-title {
@@ -97,4 +112,20 @@ html, body { /* Removes unnecessary borders */
 
 button.close {
   font-size: 42px;
+}
+
+.scroll-to-latest-note-icon {
+  background: url('/img/scroll-down.svg') no-repeat top left;
+  background-size: contain;
+  cursor: pointer;
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  color: gray;
+  fill: currentColor;
+}
+
+.note-id {
+  font-weight: bold;
+  color: gray;
 }

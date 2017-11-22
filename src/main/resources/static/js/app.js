@@ -30,10 +30,7 @@ function ScreenCaster(config) {
   };
 
   this.initNotes = function initNotes() {
-
     this.loadNotes();
-
-    $('#notesListContainer').perfectScrollbar();
   }.bind(this);
 
   this.initScreenCast = function initScreenCast() {

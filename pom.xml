@@ -59,11 +59,6 @@
       <artifactId>spring-boot-starter-jetty</artifactId>
     </dependency>
 
-    <!--    <dependency>
-          <groupId>org.springframework.boot</groupId>
-          <artifactId>spring-boot-starter-undertow</artifactId>
-        </dependency>-->
-
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-websocket</artifactId>
@@ -151,12 +146,6 @@
       <groupId>org.webjars</groupId>
       <artifactId>stomp-websocket</artifactId>
       <version>2.3.3-1</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.webjars.bower</groupId>
-      <artifactId>perfect-scrollbar</artifactId>
-      <version>0.8.1</version>
     </dependency>
 
     <!--<dependency>-->

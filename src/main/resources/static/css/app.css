@@ -57,6 +57,7 @@ html, body { /* Removes unnecessary borders */
 
 #notesList li {
   margin-bottom: 20px;
+  margin-left: 40px;
   border: none !important;
 }
 
@@ -138,8 +139,10 @@ button.close {
 }
 
 .note-id {
-  font-weight: bold;
   color: gray;
+  float: left;
+  font-size: 20px;
+  margin-left: -50px;
 }
 
 .hint-fullscreen {

@@ -112,8 +112,6 @@ function ScreenCaster(config) {
 
       this.addNote(noteEvent.note);
 
-      this.scrollToLatestNote();
-
       if (this.notificationStatus.enabled) {
 
         var notification = new Notification("New notes", {
@@ -150,12 +148,12 @@ function ScreenCaster(config) {
     Mustache.parse(template);   // optional, speeds up future uses
 
     // hack to wrap element in span
-    note.html = "<div data-note-id=\"" + note.id + "\" class=\"note-content\">" + note.html + "</div>";
+    note.html = "<span data-note-id=\"" + note.id + "\" class=\"note-content\">" + note.html + "</span>";
     note.createdAtHuman = moment(note.createdAt).format("DD.MM.YY HH:mm:ss");
 
-    var rendered = Mustache.render(template, note).trim();
+    var renderedNote = Mustache.render(template, note).trim();
 
-    $("#notesList").append(rendered);
+    $("#notesList").prepend(renderedNote);
   };
 
   this.updateUnreadNotesCount = function updateUnreadNotesCount() {

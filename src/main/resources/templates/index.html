@@ -57,13 +57,7 @@
 
       <div class="modal-header panel-heading">
         <button type="button" class="close" data-dismiss="modal" title="Close">&times;</button>
-        <h2 class="modal-title">Notes
-          <button onclick="screenCaster.scrollToLatestNote()"
-                  class="btn btn-default btn-show-latest-note"
-                  title="Show latest note"><span
-            class="scroll-to-latest-note-icon"></span>
-          </button>
-        </h2>
+        <h2 class="modal-title">Notes</h2>
       </div>
 
       <div class="modal-body panel panel-body">
@@ -104,7 +98,7 @@
 <script id="note-template" type="x-tmpl-mustache">
   <li data-note-id="{{id}}" class="list-group-item">
     <div class="note new" onmouseover="screenCaster.markNoteAsRead(this)">
-      <span class="note-id">&#35; {{id}}</span><span class="new-note-marker glyphicon glyphicon-asterisk"/><hr class="note-section-separator"/> {{{html}}}
+      <span class="note-id">&#35;{{id}}</span> {{{html}}}
       <textarea data-note-id="{{id}}" class="raw-content form-control" style="display:none" rows="5" th:required="required">{{text}}</textarea>
       <div>
         <hr class="note-section-separator"/>

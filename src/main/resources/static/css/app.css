@@ -57,7 +57,7 @@ html, body { /* Removes unnecessary borders */
 
 #notesList li {
   margin-bottom: 20px;
-  border-radius: 5px;
+  border: none !important;
 }
 
 #notesList li:last-child {
@@ -125,7 +125,23 @@ button.close {
   fill: currentColor;
 }
 
+.note-content img {
+  width: 480px;
+}
+
+.note-content img:hover + .hint-fullscreen {
+  display: inline-block;
+  position: relative;
+  left: -240px;
+  opacity: 0.10;
+  font-size: 42px;
+}
+
 .note-id {
   font-weight: bold;
   color: gray;
+}
+
+.hint-fullscreen {
+  display: none;
 }

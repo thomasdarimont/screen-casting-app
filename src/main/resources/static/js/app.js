@@ -150,8 +150,7 @@ function ScreenCaster(config) {
     Mustache.parse(template);   // optional, speeds up future uses
 
     // hack to wrap element in span
-
-    note.html = "<span data-note-id=\"" + note.id + "\" class=\"note-content\">" + note.html + "</span>";
+    note.html = "<div data-note-id=\"" + note.id + "\" class=\"note-content\">" + note.html + "</div>";
     note.createdAtHuman = moment(note.createdAt).format("DD.MM.YY HH:mm:ss");
 
     var rendered = Mustache.render(template, note).trim();
@@ -327,7 +326,9 @@ function ScreenCaster(config) {
 
         this.storeNote({
           text: "### " + fileInfo.name + "\n" +
-          "![Screenshot](/files/" + fileInfo.id + ")"
+          "<a href='/files/" + fileInfo.id + "' target='_blank'>" +
+          "![Screenshot](/files/" + fileInfo.id + ")<span class=\"hint-fullscreen glyphicon glyphicon-fullscreen\" title='Show fullscreen'></span>"
+          + "</a>"
         });
       }.bind(this));
 

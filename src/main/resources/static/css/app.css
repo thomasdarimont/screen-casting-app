@@ -40,7 +40,7 @@ html, body { /* Removes unnecessary borders */
   position: absolute;
   top: 15px;
   left: 15px;
-  opacity: 0.25;
+  opacity: 0.35;
   z-index: 1000;
 }
 

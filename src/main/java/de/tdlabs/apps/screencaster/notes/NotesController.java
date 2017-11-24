@@ -36,7 +36,6 @@ class NotesController {
     return ResponseEntity.created(location).build();
   }
 
-
   @PreAuthorize("#request.getRemoteAddr().equals(#request.getLocalAddr())")
   @PutMapping(path = "/{id}", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_FORM_URLENCODED_VALUE})
   ResponseEntity<?> updateNote(@PathVariable("id") Long id, Note note, UriComponentsBuilder uriBuilder, HttpServletRequest request) {

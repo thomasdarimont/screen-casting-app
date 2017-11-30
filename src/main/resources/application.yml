@@ -12,12 +12,17 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
+  http:
+    multipart:
+      max-file-size: 64MB
+      file-size-threshold: 128KB
 
 server:
   port: 9999
   compression:
     enabled: true
     mime-types: application/json,application/xml,text/html,text/xml,text/plain,text/css,application/javascript,image/jpeg,image/png
+
 
 screencaster:
   refreshIntervalMillis: 250

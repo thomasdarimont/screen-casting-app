@@ -34,20 +34,24 @@ class LocalFileStore implements FileStore {
 
     String folderName = DateTimeFormatter.ofPattern("'upload/'yyyy-MM-dd").format(now);
     long differencer = counter.incrementAndGet() % Long.MAX_VALUE;
-    String filename = DateTimeFormatter.ofPattern("yyyy-MM-dd-hh-mm-ss-SSS").format(now);
+    String filename = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm-ss-SSS").format(now);
 
     File folder = new File(storeLocation, folderName);
 
-    if (!folder.mkdirs()) {
-      log.error("Could not create folder {}", folder);
+    if (!folder.exists()) {
+      if (!folder.mkdirs()) {
+        log.error("Could not create folder {}", folder);
+        return null;
+      }
     }
 
     File destination = new File(folder, filename + "_" + differencer);
 
     try {
       Files.copy(file.getInputStream(), destination.toPath());
+      log.info("stored file {} under {}", file.getName(), destination.getAbsolutePath());
     } catch (IOException e) {
-      e.printStackTrace();
+      log.error("could not store file {}", file.getName(), e);
     }
 
     return destination.toPath();

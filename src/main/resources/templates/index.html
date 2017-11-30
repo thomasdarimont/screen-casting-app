@@ -20,6 +20,9 @@
   <script src="/webjars/bootstrap/js/bootstrap.min.js"></script>
   <link rel="stylesheet" href="/webjars/bootstrap/css/bootstrap.min.css"/>
 
+  <script src="/webjars/dropzone/min/dropzone.min.js"></script>
+  <link rel="stylesheet" href="/webjars/dropzone/min/dropzone.min.css"/>
+
   <link rel="stylesheet" href="css/app.css"/>
 </head>
 <body>
@@ -86,6 +89,10 @@
       </div>
 
       <div class="modal-footer">
+        <div class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100"
+             aria-valuenow="0">
+          <div class="progress-bar progress-bar-success" style="width:0;" data-dz-uploadprogress=""></div>
+        </div>
       </div>
     </div>
   </div>

@@ -96,6 +96,15 @@ html, body { /* Removes unnecessary borders */
   display: inline;
 }
 
+.modal-footer {
+  padding: 0;
+}
+
+.progress {
+  height: 5px;
+  margin-bottom: 0;
+}
+
 .screen-cast-url {
   color: #f3f;
   font-size: 80px;

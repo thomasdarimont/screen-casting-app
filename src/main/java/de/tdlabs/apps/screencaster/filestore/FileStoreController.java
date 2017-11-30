@@ -39,8 +39,15 @@ class FileStoreController {
 
     InputStream is = fileService.getContents(file);
 
+    HttpHeaders headers = new HttpHeaders();
+
+    if (!file.getContentType().startsWith("image/")) {
+      headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + file.getName());
+    }
+    headers.add(HttpHeaders.CONTENT_TYPE, file.getContentType());
+
     return ResponseEntity.ok()
-      .header(HttpHeaders.CONTENT_TYPE, file.getContentType())
+      .headers(headers)
       .body(new InputStreamResource(is));
   }
 }

@@ -247,6 +247,28 @@ function ScreenCaster(config) {
   }.bind(this);
 
   this.setupNotesForm = function setupNotesForm() {
+
+    var $progressBar = $(".progress-bar");
+
+    var dropzone = new Dropzone("#notesDialog", {
+      url: "/files",
+      headers: this.headers,
+      addedfile: function (file) {
+        console.log(file);
+      }, uploadprogress: function (foo, progress) {
+        console.log("update upload progress", progress);
+        $progressBar.width = progress + "%";
+      }.bind(this)
+    });
+    dropzone.on("success", function (foo, fileInfo) {
+      console.log("upload successful", fileInfo);
+
+      this.storeNote({
+        text: this.createNoteTextFromFileInfo(fileInfo)
+      });
+
+    }.bind(this));
+
     $("#notesForm").submit(function (event) {
 
       event.preventDefault();
@@ -260,6 +282,28 @@ function ScreenCaster(config) {
       $("#notesForm")[0].reset();
     }.bind(this));
   }.bind(this);
+
+  this.createNoteTextFromFileInfo = function createNoteTextFromFileInfo(fileInfo) {
+
+    var assetNoteTextTemplate = "### {{name}} \n" +
+      "<a href='/files/{{id}}' target='_blank'>" +
+      "{{{raw}}}" +
+      "</a>"
+    ;
+
+    var assetData = {
+      id: fileInfo.id,
+      name: fileInfo.name,
+    };
+
+    if (fileInfo.contentType.indexOf("image/") === 0) {
+      assetData.raw = "![Image](/files/" + fileInfo.id + ")<span class=\"hint-fullscreen glyphicon glyphicon-fullscreen\" title='Show fullscreen'></span>";
+      return Mustache.render(assetNoteTextTemplate, assetData);
+    }
+
+    assetData.raw = "[File](/files/" + fileInfo.id + ")";
+    return Mustache.render(assetNoteTextTemplate, assetData);
+  };
 
   this.storeNote = function storeNote(note) {
 
@@ -285,6 +329,24 @@ function ScreenCaster(config) {
     });
   }.bind(this);
 
+  this.uploadFileWithNote = function (uploadInfo, createUploadNoteText) {
+
+    this.uploadFile({
+      filename: uploadInfo.filename,
+      data: uploadInfo.file,
+      contentType: uploadInfo.type
+    }, function (fileInfo) {
+
+      if (!fileInfo) {
+        return;
+      }
+
+      this.storeNote({
+        text: createUploadNoteText(fileInfo)
+      });
+    }.bind(this));
+  };
+
   this.initClipboardSupport = function initClipboardSupport() {
 
     function onPaste(evt) {
@@ -307,25 +369,11 @@ function ScreenCaster(config) {
         return;
       }
 
-      var blob = currentItem.getAsFile();
-
-      this.uploadFile({
-        filename: "Screenshot " + moment(Date.now()).format("DD-MM-YY_HH-mm-ss"),
-        data: blob,
-        contentType: currentItem.type
-      }, function (fileInfo) {
-
-        if (!fileInfo) {
-          return;
-        }
-
-        this.storeNote({
-          text: "### " + fileInfo.name + "\n" +
-          "<a href='/files/" + fileInfo.id + "' target='_blank'>" +
-          "![Screenshot](/files/" + fileInfo.id + ")<span class=\"hint-fullscreen glyphicon glyphicon-fullscreen\" title='Show fullscreen'></span>"
-          + "</a>"
-        });
-      }.bind(this));
+      this.uploadFileWithNote({
+        file: currentItem.getAsFile(),
+        type: currentItem.type,
+        filename: "Screenshot " + moment(Date.now()).format("DD-MM-YY_HH-mm-ss")
+      }, this.createNoteTextFromFileInfo);
 
       evt.preventDefault();
     }

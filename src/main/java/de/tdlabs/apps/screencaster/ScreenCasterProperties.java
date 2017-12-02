@@ -49,6 +49,7 @@ public class ScreenCasterProperties {
     }
   }
 
+
   @Data
   public static class FileStoreProperties {
 

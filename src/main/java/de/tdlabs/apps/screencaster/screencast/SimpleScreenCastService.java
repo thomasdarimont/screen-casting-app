@@ -2,6 +2,7 @@ package de.tdlabs.apps.screencaster.screencast;
 
 import de.tdlabs.apps.screencaster.ScreenCasterProperties;
 import de.tdlabs.apps.screencaster.config.WebsocketDestinations;
+import de.tdlabs.apps.screencaster.screencast.grabbing.ScreenGrabber;
 import de.tdlabs.apps.screencaster.settings.SettingsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;

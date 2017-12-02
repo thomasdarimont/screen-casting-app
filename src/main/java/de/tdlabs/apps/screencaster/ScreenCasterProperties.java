@@ -44,8 +44,20 @@ public class ScreenCasterProperties {
      */
     private float quality = DEFAULT_QUALITY;
 
+    private final X11Properties x11 = new X11Properties();
+
     public boolean isGrabDefaultScreen() {
       return screenNo == DEFAULT_SCREEN;
+    }
+
+    @Data
+    public static class X11Properties {
+
+      public static final String DISPLAY = "DISPLAY";
+
+      public static final String DEFAULT_DISPLAY = ":0";
+
+      private String display = System.getenv().getOrDefault(DISPLAY, DEFAULT_DISPLAY);
     }
   }
 

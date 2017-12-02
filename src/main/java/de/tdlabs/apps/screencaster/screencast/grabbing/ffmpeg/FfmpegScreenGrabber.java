@@ -49,7 +49,7 @@ class FfmpegScreenGrabber extends AbstractScreenGrabber {
     }
 
     if (SystemUtils.IS_OS_WINDOWS) {
-      FFmpegFrameGrabber grabber = new FFmpegFrameGrabber("screen-capture-recorder");
+      FFmpegFrameGrabber grabber = new FFmpegFrameGrabber("video=screen-capture-recorder");
       grabber.setFormat("dshow");
       return grabber;
     }

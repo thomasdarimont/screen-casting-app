@@ -16,6 +16,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.InputStream;
 import java.util.UUID;
 
+import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
+
 @RestController
 @RequestMapping("/files")
 @RequiredArgsConstructor
@@ -36,11 +38,10 @@ class FileStoreController {
   ResponseEntity<?> download(@PathVariable("id") UUID id) {
 
     FileEntity file = fileService.loadFile(id);
-
     InputStream is = fileService.getContents(file);
 
     return ResponseEntity.ok()
-      .header(HttpHeaders.CONTENT_TYPE, file.getContentType())
+      .header(CONTENT_TYPE, file.getContentType())
       .body(new InputStreamResource(is));
   }
 }

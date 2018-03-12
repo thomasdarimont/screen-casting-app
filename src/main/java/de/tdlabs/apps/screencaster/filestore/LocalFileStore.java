@@ -47,7 +47,7 @@ class LocalFileStore implements FileStore {
     try {
       Files.copy(file.getInputStream(), destination.toPath());
     } catch (IOException e) {
-      e.printStackTrace();
+      log.error("Could not save file to {}", destination, e);
     }
 
     return destination.toPath();
@@ -59,7 +59,7 @@ class LocalFileStore implements FileStore {
     try {
       return new BufferedInputStream(Files.newInputStream(path));
     } catch (IOException e) {
-      e.printStackTrace();
+      log.error("Could not read file contents from {}", path, e);
     }
 
     return null;

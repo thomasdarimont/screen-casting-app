@@ -46,6 +46,11 @@ class SystemTrayRegistrar {
 
     Menu menu = systemTray.getMenu();
 
+    if (menu == null) {
+      log.warn("Skipping menu registration: Couldn't access SystemTray menu.");
+      return;
+    }
+
     menu.add(new MenuItem("Open Screencaster", (e) -> {
       try {
         Desktop.browseURL("http://localhost:" + env.getProperty("server.port"));

@@ -79,9 +79,12 @@ class SystemTrayRegistrar {
   @PreDestroy
   public void destroy() {
     SystemTray systemTray = SystemTray.get();
-    if (systemTray != null) {
-      systemTray.getMenu().clear();
+
+    if (systemTray == null || systemTray.getMenu() == null) {
+      return;
     }
+
+    systemTray.getMenu().remove();
   }
 
   private void toggleTrayStatus(SystemTray systemTray, boolean enabled) {

@@ -22,20 +22,20 @@ public class NoteEntity extends AbstractPersistable<Long> {
 
   @NotEmpty
   @Column(length = 64000)
-  String text;
+  private String text;
 
   @NotEmpty
   @Column(length = 64000)
-  String html;
+  private String html;
 
   @CreatedDate
-  LocalDateTime createdAt;
+  private LocalDateTime createdAt;
 
   @LastModifiedDate
-  LocalDateTime updatedAt;
+  private LocalDateTime updatedAt;
 
   @Version
-  Long version;
+  private Long version;
 
   public static NoteEntity valueOf(Note note) {
     NoteEntity ne = new NoteEntity();

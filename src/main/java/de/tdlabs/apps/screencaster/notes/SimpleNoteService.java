@@ -26,7 +26,7 @@ class SimpleNoteService implements NoteService {
     noteEntity.setHtml(markdownFormatter.format(noteEntity.getText()));
     NoteEntity saved = noteRepository.save(noteEntity);
 
-    Note note = noteEntity.toNote();
+    Note note = saved.toNote();
 
     NoteEvent noteEvent = newNote ? NoteEvent.created(note) : NoteEvent.updated(note);
 

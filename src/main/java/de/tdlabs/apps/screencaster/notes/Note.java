@@ -8,14 +8,14 @@ import java.time.LocalDateTime;
 @Data
 class Note {
 
-  Long id;
+  private Long id;
 
   @NotEmpty
-  String html;
+  private String html;
 
-  String text;
+  private String text;
 
-  LocalDateTime createdAt;
+  private LocalDateTime createdAt;
 
-  LocalDateTime updatedAt;
+  private LocalDateTime updatedAt;
 }

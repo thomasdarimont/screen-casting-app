@@ -6,13 +6,17 @@ import org.springframework.web.socket.config.annotation.AbstractWebSocketMessage
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 
+import static de.tdlabs.apps.screencaster.config.WebsocketDestinations.TOPIC_NOTES;
+import static de.tdlabs.apps.screencaster.config.WebsocketDestinations.TOPIC_POINTER;
+import static de.tdlabs.apps.screencaster.config.WebsocketDestinations.TOPIC_SETTINGS;
+
 @Configuration
 @EnableWebSocketMessageBroker
 class WebSocketConfig extends AbstractWebSocketMessageBrokerConfigurer {
 
   @Override
   public void configureMessageBroker(MessageBrokerRegistry config) {
-    config.enableSimpleBroker(WebsocketDestinations.TOPIC_NOTES, WebsocketDestinations.TOPIC_SETTINGS, WebsocketDestinations.TOPIC_POINTER);
+    config.enableSimpleBroker(TOPIC_NOTES, TOPIC_SETTINGS, TOPIC_POINTER);
     config.setApplicationDestinationPrefixes("/app");
   }
 

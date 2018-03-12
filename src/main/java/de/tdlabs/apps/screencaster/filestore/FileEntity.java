@@ -18,21 +18,21 @@ import java.time.LocalDateTime;
 public class FileEntity {
 
   @Id
-  String id;
+  private String id;
 
-  String path;
+  private String path;
 
-  String name;
+  private String name;
 
-  String contentType;
+  private String contentType;
 
   @CreatedDate
-  LocalDateTime createdAt;
+  private LocalDateTime createdAt;
 
   @LastModifiedDate
-  LocalDateTime updatedAt;
+  private LocalDateTime updatedAt;
 
-  long sizeInBytes;
+  private long sizeInBytes;
 
   public FileInfo toInfo() {
     return new FileInfo(id, name, contentType, sizeInBytes);

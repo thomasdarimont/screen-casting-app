@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "note")
 @EntityListeners(AuditingEntityListener.class)
-public class NoteEntity extends AbstractPersistable<Long> {
+class NoteEntity extends AbstractPersistable<Long> {
 
   @NotEmpty
   @Column(length = 64000)

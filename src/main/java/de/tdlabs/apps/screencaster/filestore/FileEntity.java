@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "file")
 @EntityListeners(AuditingEntityListener.class)
-public class FileEntity {
+class FileEntity {
 
   @Id
   private String id;

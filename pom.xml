@@ -21,6 +21,8 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <dependency-check-format>HTML</dependency-check-format>
+
     <java.version>1.8</java.version>
     <!-- Fix Java 9 BUG https://issues.jboss.org/browse/UNDERTOW-1187 -->
     <!--<undertow.version>1.4.21.Final</undertow.version>-->
@@ -193,6 +195,22 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
+      </plugin>
+
+      <plugin>
+        <groupId>org.owasp</groupId>
+        <artifactId>dependency-check-maven</artifactId>
+        <version>1.4.5</version>
+        <configuration>
+          <!-- Skip artifacts not bundled in distribution (provided scope) -->
+          <skipProvidedScope>true</skipProvidedScope>
+          <!-- Suppress false positives or dependencies that cannot be changed for specific reasons.-->
+          <suppressionFile>suppressed-cves.xml</suppressionFile>
+          <format>${dependency-check-format}</format>
+        </configuration>
+        <!-- Don't specify an execution, because this might take long and is not needed in every build.
+             A report can be generated on demand using "mvn org.owasp:dependency-check-maven:check"
+             report will be saved to target/dependency-check-report.html -->
       </plugin>
     </plugins>
   </build>

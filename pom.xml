@@ -14,7 +14,7 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>1.5.11.RELEASE</version>
+    <version>1.5.12.RELEASE</version>
     <relativePath/> <!-- lookup parent from repository -->
   </parent>
 
@@ -26,9 +26,6 @@
     <java.version>1.8</java.version>
     <!-- Fix Java 9 BUG https://issues.jboss.org/browse/UNDERTOW-1187 -->
     <!--<undertow.version>1.4.21.Final</undertow.version>-->
-
-    <!-- https://spring.io/blog/2018/04/09/cve-2018-1275-address-partial-fix-for-cve-2018-1270 -->
-    <spring.version>4.3.16.RELEASE</spring.version>
   </properties>
 
   <dependencies>

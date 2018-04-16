@@ -321,7 +321,7 @@ function ScreenCaster(config) {
 
         this.storeNote({
           text: "### " + fileInfo.name + "\n" +
-          "<a href='/files/" + fileInfo.id + "' target='_blank'>" +
+          "<a href='/files/" + fileInfo.id + "' target='_blank' rel='noopener noreferrer'>" +
           "![Screenshot](/files/" + fileInfo.id + ")<span class=\"hint-fullscreen glyphicon glyphicon-fullscreen\" title='Show fullscreen'></span>"
           + "</a>"
         });

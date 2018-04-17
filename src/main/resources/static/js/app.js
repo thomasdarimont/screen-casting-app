@@ -53,8 +53,7 @@ function ScreenCaster(config) {
 
   this.initWebSocketConnection = function initWebSocketConnection() {
 
-    var socket = new SockJS("/screencaster/ws");
-    this.stompClient = Stomp.over(socket);
+    this.stompClient = Stomp.over(new SockJS("/screencaster/ws"));
     this.stompClient.debug = null;
 
     this.stompClient.connect({}, function (frame) {

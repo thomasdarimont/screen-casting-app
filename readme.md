@@ -6,14 +6,14 @@ Java app that captures screenshots of the current machine and exposes them via H
 mvn clean package
 ```
 
-## Run
+## Run (with Java 9)
 ```
-java -jar target/screen-casting-app.jar
+java --add-modules java.xml.bind -jar target/screen-casting-app.jar
 ```
 
 ## Configuration
 
-The screen-casting-app listens on port 9999 by default. One can customize the port by setting the  
+The screen-casting-app listens on port 8443 via https by default. One can customize the port by setting the  
 `server.port` system property.   
 ```
 -Dserver.port=1234

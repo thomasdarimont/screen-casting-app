@@ -1,6 +1,5 @@
 package de.tdlabs.apps.screencaster;
 
-import de.tdlabs.apps.screencaster.web.support.JettyHttp2Customizer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -28,18 +27,13 @@ public class App {
     SpringApplication.run(App.class, args);
   }
 
-  @Bean
-  public EmbeddedServletContainerCustomizer jettyHttp2Customizer(ServerProperties serverProperties) {
-    return new JettyHttp2Customizer(serverProperties);
-  }
-
   @EventListener
-  public void run(ApplicationReadyEvent are) throws Exception {
+  public void run(ApplicationReadyEvent are) {
 
     String hostName = tryResolveHostnameWithFallbackToLocalhost();
 
     System.out.println("########################################################>");
-    System.out.printf("####### Screencast URL:  http://%s:%s/%n", hostName, serverPort);
+    System.out.printf("####### Screencast URL:  https://%s:%s/%n", hostName, serverPort);
     System.out.println("########################################################>");
   }
 

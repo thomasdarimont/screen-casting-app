@@ -61,20 +61,15 @@
       <artifactId>spring-boot-starter-jetty</artifactId>
     </dependency>
 
+    <!-- https://mvnrepository.com/artifact/org.eclipse.jetty/jetty-alpn-java-server -->
     <dependency>
       <groupId>org.eclipse.jetty</groupId>
-      <artifactId>jetty-alpn-server</artifactId>
+      <artifactId>jetty-alpn-java-server</artifactId>
     </dependency>
-
+    <!-- https://mvnrepository.com/artifact/org.eclipse.jetty.http2/http2-server -->
     <dependency>
       <groupId>org.eclipse.jetty.http2</groupId>
       <artifactId>http2-server</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.mortbay.jetty.alpn</groupId>
-      <artifactId>jetty-alpn-agent</artifactId>
-      <version>2.0.6</version>
     </dependency>
 
     <dependency>

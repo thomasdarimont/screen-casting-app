@@ -37,7 +37,7 @@ class SimpleFileService implements FileService {
 
   @Override
   public FileEntity loadFile(UUID id) {
-    return fileRepository.findOne(id.toString());
+    return fileRepository.findById(id.toString()).orElse(null);
   }
 
   @Override

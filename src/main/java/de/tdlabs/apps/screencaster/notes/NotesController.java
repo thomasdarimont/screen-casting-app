@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
 import java.util.List;
 
@@ -26,9 +25,9 @@ class NotesController {
 
   private final NoteService noteService;
 
-  @PreAuthorize("#request.getRemoteAddr().equals(#request.getLocalAddr())")
+  @PreAuthorize("@accessGuard.isStreamerRequest()")
   @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_FORM_URLENCODED_VALUE})
-  ResponseEntity<?> createNote(Note note, UriComponentsBuilder uriBuilder, HttpServletRequest request) {
+  public ResponseEntity<?> createNote(Note note, UriComponentsBuilder uriBuilder) {
 
     NoteEntity saved = noteService.save(NoteEntity.valueOf(note));
     URI location = uriBuilder.path("/notes/{id}").buildAndExpand(saved.getId()).toUri();
@@ -36,9 +35,9 @@ class NotesController {
     return ResponseEntity.created(location).build();
   }
 
-  @PreAuthorize("#request.getRemoteAddr().equals(#request.getLocalAddr())")
+  @PreAuthorize("@accessGuard.isStreamerRequest()")
   @PutMapping(path = "/{id}", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_FORM_URLENCODED_VALUE})
-  ResponseEntity<?> updateNote(@PathVariable("id") Long id, Note note, UriComponentsBuilder uriBuilder, HttpServletRequest request) {
+  public ResponseEntity<?> updateNote(@PathVariable("id") Long id, Note note) {
 
     NoteEntity stored = noteService.findById(id);
     if (stored == null) {
@@ -52,7 +51,7 @@ class NotesController {
   }
 
   @GetMapping
-  ResponseEntity<List<Note>> findAll() {
+  public ResponseEntity<List<Note>> findAll() {
     return ResponseEntity.ok(
       noteService.findAll()
         .stream()
@@ -62,21 +61,21 @@ class NotesController {
   }
 
   @DeleteMapping
-  @PreAuthorize("#request.getRemoteAddr().equals(#request.getLocalAddr())")
-  ResponseEntity<?> deleteAll(HttpServletRequest request) {
+  @PreAuthorize("@accessGuard.isStreamerRequest()")
+  public ResponseEntity<?> deleteAll() {
 
     noteService.deleteAll();
     return ResponseEntity.noContent().build();
   }
 
   @GetMapping("/{id}")
-  ResponseEntity<Note> findById(@PathVariable("id") Long id) {
+  public ResponseEntity<Note> findById(@PathVariable("id") Long id) {
     return ResponseEntity.ok(noteService.findById(id).toNote());
   }
 
   @DeleteMapping("/{id}")
-  @PreAuthorize("#request.getRemoteAddr().equals(#request.getLocalAddr())")
-  ResponseEntity<?> delete(@PathVariable("id") Long id, HttpServletRequest request) {
+  @PreAuthorize("@accessGuard.isStreamerRequest()")
+  public ResponseEntity<?> delete(@PathVariable("id") Long id) {
 
     NoteEntity note = noteService.findById(id);
     if (note == null) {

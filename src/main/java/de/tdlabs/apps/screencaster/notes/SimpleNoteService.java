@@ -47,7 +47,7 @@ class SimpleNoteService implements NoteService {
 
   @Transactional(readOnly = true)
   public NoteEntity findById(Long id) {
-    return noteRepository.findOne(id);
+    return noteRepository.findById(id).orElse(null);
   }
 
   @Transactional(readOnly = true)

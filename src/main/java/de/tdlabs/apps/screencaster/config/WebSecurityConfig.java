@@ -14,8 +14,9 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
       .authorizeRequests()
       .anyRequest().permitAll()
       .and().headers().frameOptions().deny()
-      .and()
-      .formLogin().and()
-      .httpBasic();
+//      .and()
+//      .formLogin().and()
+//      .httpBasic()
+    ;
   }
 }

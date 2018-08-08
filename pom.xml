@@ -24,6 +24,7 @@
     <dependency-check-format>HTML</dependency-check-format>
 
     <java.version>1.8</java.version>
+    <commonmark.version>0.11.0</commonmark.version>
     <!-- Fix Java 9 BUG https://issues.jboss.org/browse/UNDERTOW-1187 -->
     <!--<undertow.version>1.4.21.Final</undertow.version>-->
   </properties>
@@ -96,13 +97,13 @@
     <dependency>
       <groupId>com.atlassian.commonmark</groupId>
       <artifactId>commonmark</artifactId>
-      <version>0.11.0</version>
+      <version>${commonmark.version}</version>
     </dependency>
 
     <dependency>
       <groupId>com.atlassian.commonmark</groupId>
       <artifactId>commonmark-ext-autolink</artifactId>
-      <version>0.11.0</version>
+      <version>${commonmark.version}</version>
     </dependency>
 
     <dependency>

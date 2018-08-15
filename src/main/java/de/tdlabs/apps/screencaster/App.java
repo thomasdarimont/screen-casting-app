@@ -17,6 +17,8 @@ public class App {
   @Value("${server.port}")
   String serverPort;
 
+  String scheme = "http";
+
   public static void main(String[] args) {
 
     System.setProperty("java.awt.headless", "false");
@@ -25,12 +27,15 @@ public class App {
   }
 
   @EventListener
-  public void run(ApplicationReadyEvent are) throws Exception {
+  public void run(ApplicationReadyEvent are) {
 
     String hostName = tryResolveHostnameWithFallbackToLocalhost();
+    String ipAddress = tryGetIpAddressWithFallbackToLoopback();
 
     System.out.println("########################################################>");
-    System.out.printf("####### Screencast URL:  http://%s:%s/%n", hostName, serverPort);
+    System.out.printf("####### Screencast URLs%n");
+    System.out.printf("####### %s://%s:%s/%n", scheme, hostName, serverPort);
+    System.out.printf("####### %s://%s:%s/%n", scheme, ipAddress, serverPort);
     System.out.println("########################################################>");
   }
 
@@ -40,13 +45,17 @@ public class App {
       return InetAddress.getLocalHost().getHostName();
     } catch (UnknownHostException uhe) {
       System.err.printf("%s. Trying IP based configuration...%n", uhe.getMessage());
-      try {
-        return InetAddress.getLocalHost().getHostAddress();
-      } catch (UnknownHostException innerUhe) {
-        System.err.printf("%s. Using localhost as fallback...%n", uhe.getMessage());
-        System.err.println("You need to determine the hostname yourself!");
-        return "localhost";
-      }
+      return "localhost";
+    }
+  }
+
+  private String tryGetIpAddressWithFallbackToLoopback() {
+    try {
+      return InetAddress.getLocalHost().getHostAddress();
+    } catch (UnknownHostException innerUhe) {
+      System.err.printf("Could not determine host address. Using 127.0.0.1 as fallback...%n");
+      System.err.println("You need to determine the hostname yourself!");
+      return "127.0.0.1";
     }
   }
 }

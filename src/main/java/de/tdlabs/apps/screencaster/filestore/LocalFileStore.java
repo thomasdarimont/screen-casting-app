@@ -38,7 +38,7 @@ class LocalFileStore implements FileStore {
 
     File folder = new File(storeLocation, folderName);
 
-    if (!folder.mkdirs()) {
+    if (!folder.exists() && !folder.mkdirs()) {
       log.error("Could not create folder {}", folder);
     }
 

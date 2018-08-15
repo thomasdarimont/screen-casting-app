@@ -258,6 +258,18 @@ function ScreenCaster(config) {
 
       $("#notesForm")[0].reset();
     }.bind(this));
+
+    $("#notesForm").keydown(function (keyEvent) {
+      if ((keyEvent.ctrlKey || keyEvent.metaKey) && keyEvent.which == 13) {
+
+        $("#notesForm").submit();
+
+        event.preventDefault();
+        return false;
+      }
+    });
+
+
   }.bind(this);
 
   this.storeNote = function storeNote(note) {
@@ -320,9 +332,9 @@ function ScreenCaster(config) {
 
         this.storeNote({
           text: "### " + fileInfo.name + "\n" +
-          "<a href='/files/" + fileInfo.id + "' target='_blank' rel='noopener noreferrer'>" +
-          "![Screenshot](/files/" + fileInfo.id + ")<span class=\"hint-fullscreen glyphicon glyphicon-fullscreen\" title='Show fullscreen'></span>"
-          + "</a>"
+            "<a href='/files/" + fileInfo.id + "' target='_blank' rel='noopener noreferrer'>" +
+            "![Screenshot](/files/" + fileInfo.id + ")<span class=\"hint-fullscreen glyphicon glyphicon-fullscreen\" title='Show fullscreen'></span>"
+            + "</a>"
         });
       }.bind(this));
 

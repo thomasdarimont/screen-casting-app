@@ -115,17 +115,6 @@ button.close {
   font-size: 42px;
 }
 
-.scroll-to-latest-note-icon {
-  background: url('/img/scroll-down.svg') no-repeat top left;
-  background-size: contain;
-  cursor: pointer;
-  display: inline-block;
-  width: 20px;
-  height: 20px;
-  color: gray;
-  fill: currentColor;
-}
-
 .note-content img {
   width: 480px;
 }

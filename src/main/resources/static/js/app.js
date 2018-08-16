@@ -260,9 +260,12 @@ function ScreenCaster(config) {
     }.bind(this));
 
     $("#notesForm").keydown(function (keyEvent) {
-      if ((keyEvent.ctrlKey || keyEvent.metaKey) && keyEvent.which == 13) {
+
+      var ctrlAndEnterWasPressed = (keyEvent.ctrlKey || keyEvent.metaKey) && keyEvent.which == 13;
+      if (ctrlAndEnterWasPressed) {
 
         $("#notesForm").submit();
+        $("#txtNote").focus();
 
         event.preventDefault();
         return false;

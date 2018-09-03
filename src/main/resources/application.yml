@@ -12,6 +12,14 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
+  servlet:
+    multipart:
+# we replace springs default multipart handling
+      enabled: false
+# but we still use the multipart configuration properties
+      max-file-size: 64MB
+
+
 
 server:
   port: 9999

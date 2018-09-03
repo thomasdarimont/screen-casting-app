@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.InputStream;
 import java.util.UUID;
 
+import static org.springframework.http.HttpHeaders.CONTENT_DISPOSITION;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 
 @RestController
@@ -40,6 +41,7 @@ class FileStoreController {
 
     return ResponseEntity.ok()
       .header(CONTENT_TYPE, file.getContentType())
+      .header(CONTENT_DISPOSITION, "inline; filename=" + file.getName())
       .body(new InputStreamResource(is));
   }
 }

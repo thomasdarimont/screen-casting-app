@@ -2,7 +2,6 @@ package de.tdlabs.apps.screencaster.screencast.grabbing.awt;
 
 import de.tdlabs.apps.screencaster.ScreenCasterProperties;
 import de.tdlabs.apps.screencaster.screencast.grabbing.AbstractScreenGrabber;
-import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -19,7 +18,7 @@ class AwtScreenGrabber extends AbstractScreenGrabber {
   }
 
   @PostConstruct
-  public void start(){
+  public void start() {
     try {
       this.robot = new Robot(getScreen());
     } catch (AWTException e) {

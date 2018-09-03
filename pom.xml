@@ -33,6 +33,12 @@
   <dependencies>
 
     <dependency>
+      <!-- workaround java.lang.NoClassDefFoundError: javax/xml/bind/JAXBException in Java 9/10 -->
+      <groupId>javax.xml.bind</groupId>
+      <artifactId>jaxb-api</artifactId>
+    </dependency>
+
+    <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-properties-migrator</artifactId>
       <scope>runtime</scope>

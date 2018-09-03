@@ -27,7 +27,93 @@ function ScreenCaster(config) {
     this.notificationStatus.enabled = false;
     this.setupNotesForm();
     this.initClipboardSupport();
+    this.initDragAndDropSupport();
   };
+
+  this.uploadFile = function uploadSingleFile(fileData) {
+
+    console.log('uploading ' + fileData.name);
+    this.uploadFileViaAjax({
+      filename: fileData.name,
+      data: fileData.data,
+      contentType: fileData.type
+    }, function (fileInfo) {
+
+      if (!fileInfo) {
+        return;
+      }
+
+      if (fileInfo.contentType.indexOf("image") === 0) {
+        this.storeNote({
+          text: "### " + fileInfo.name + "\n" +
+            "<a href='/files/" + fileInfo.id + "' target='_blank' rel='noopener noreferrer'>" +
+            "![Screenshot](/files/" + fileInfo.id + ")<span class=\"hint-fullscreen glyphicon glyphicon-fullscreen\" title='Show fullscreen'></span>"
+            + "</a>"
+        });
+      } else {
+        this.storeNote({
+          text: "### File   " + "<a href='/files/" + fileInfo.id + "' target='_blank' rel='noopener noreferrer'>" + fileInfo.name + "</a>"
+        });
+      }
+    }.bind(this));
+  }.bind(this);
+
+  this.initDragAndDropSupport = function initDragAndDropSupport() {
+
+    function removeDragData(ev) {
+      console.log('Removing drag data');
+
+      if (ev.dataTransfer.items) {
+        // Use DataTransferItemList interface to remove the drag data
+        ev.dataTransfer.items.clear();
+      } else {
+        // Use DataTransfer interface to remove the drag data
+        ev.dataTransfer.clearData();
+      }
+    }
+
+    var htmlElement = document.querySelector("html");
+    htmlElement.addEventListener("dragover", function(evt){
+      evt.preventDefault();
+    });
+
+    htmlElement.addEventListener("drop", function(evt){
+      evt.preventDefault();
+    });
+
+    var notesDialog = document.querySelector("#notesDialog");
+    notesDialog.addEventListener("drop", function(evt){
+      evt.preventDefault();
+
+      let dataTrans = evt.dataTransfer;
+      if (dataTrans.items) {
+        // Use DataTransferItemList interface to access the file(s)
+        for (var i = 0; i < dataTrans.items.length; i++) {
+          // If dropped items aren't files, reject them
+          if (dataTrans.items[i].kind === 'file') {
+            this.uploadFile(this.toFileData(dataTrans.items[i].getAsFile()));
+          }
+        }
+      } else {
+        // Use DataTransfer interface to access the file(s)
+        for (var i = 0; i < dataTrans.files.length; i++) {
+          this.uploadFile(this.toFileData(dataTrans.files[i]));
+        }
+      }
+
+      // TODO cleanup dataTransfer
+      // removeDragData(evt);
+    }.bind(this));
+
+  }.bind(this);
+
+  this.toFileData = function toFileData (file) {
+    return {
+      name: file.name,
+      type: file.type,
+      data: file,
+    }
+  }.bind(this);
 
   this.initNotes = function initNotes() {
     this.loadNotes();
@@ -303,6 +389,8 @@ function ScreenCaster(config) {
 
     function onPaste(evt) {
 
+      evt.preventDefault();
+
       if (!evt.clipboardData) {
         return;
       }
@@ -324,30 +412,16 @@ function ScreenCaster(config) {
       var blob = currentItem.getAsFile();
 
       this.uploadFile({
-        filename: "Screenshot " + moment(Date.now()).format("DD-MM-YY_HH-mm-ss"),
+        name: "Screenshot " + moment(Date.now()).format("DD-MM-YY_HH-mm-ss"),
         data: blob,
-        contentType: currentItem.type
-      }, function (fileInfo) {
-
-        if (!fileInfo) {
-          return;
-        }
-
-        this.storeNote({
-          text: "### " + fileInfo.name + "\n" +
-            "<a href='/files/" + fileInfo.id + "' target='_blank' rel='noopener noreferrer'>" +
-            "![Screenshot](/files/" + fileInfo.id + ")<span class=\"hint-fullscreen glyphicon glyphicon-fullscreen\" title='Show fullscreen'></span>"
-            + "</a>"
-        });
-      }.bind(this));
-
-      evt.preventDefault();
+        type: currentItem.type
+      });
     }
 
     document.addEventListener('paste', onPaste.bind(this), false);
   }.bind(this);
 
-  this.uploadFile = function uploadFile(fileData, callback) {
+  this.uploadFileViaAjax = function uploadFileViaAjax(fileData, callback) {
 
     var data = new FormData();
     data.append('file', fileData.data, fileData.filename);

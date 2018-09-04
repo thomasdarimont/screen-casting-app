@@ -7,7 +7,7 @@ function ScreenCaster(config) {
   this.screenUpdateInterval = 250;
   this.currentPointerLocation = null;
   this.notificationStatus = {
-    enabed: false
+    enabled: false
   };
   this.headers = {};
 

@@ -593,8 +593,6 @@ function ScreenCaster(config) {
         var scalingW = cvs.width / screenDimensions.w;
         var scalingH = cvs.height / screenDimensions.h;
 
-        var centerX = cvs.width / 2;
-        var centerY = cvs.height / 2;
         var radius = 4;
 
         context.beginPath();

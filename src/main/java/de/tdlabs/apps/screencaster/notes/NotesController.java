@@ -36,8 +36,8 @@ class NotesController {
   }
 
   @PreAuthorize("@accessGuard.isStreamerRequest()")
-  @PutMapping(path = "/{id}", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_FORM_URLENCODED_VALUE})
-  public ResponseEntity<?> updateNote(@PathVariable("id") Long id, Note note) {
+  @PutMapping(path = "/{noteId}", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_FORM_URLENCODED_VALUE})
+  public ResponseEntity<?> updateNote(@PathVariable("noteId") Long id, Note note) {
 
     NoteEntity stored = noteService.findById(id);
     if (stored == null) {

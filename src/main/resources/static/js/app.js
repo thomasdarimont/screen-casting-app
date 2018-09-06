@@ -356,8 +356,9 @@ function ScreenCaster(config) {
         event.preventDefault();
         return false;
       }
-    });
 
+      return true;
+    });
 
   }.bind(this);
 
@@ -388,8 +389,6 @@ function ScreenCaster(config) {
   this.initClipboardSupport = function initClipboardSupport() {
 
     function onPaste(evt) {
-
-      evt.preventDefault();
 
       if (!evt.clipboardData) {
         return;

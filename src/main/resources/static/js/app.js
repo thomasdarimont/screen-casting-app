@@ -111,7 +111,7 @@ function ScreenCaster(config) {
     return {
       name: file.name,
       type: file.type,
-      data: file,
+      data: file
     }
   }.bind(this);
 
@@ -235,7 +235,10 @@ function ScreenCaster(config) {
 
     var renderedNote = Mustache.render(template, note).trim();
 
-    $("#notesList").prepend(renderedNote);
+    var noteElement = $("#notesList").prepend(renderedNote);
+
+    // FIXME find a way to highlight only the added note
+    Prism.highlightAll();
   };
 
   this.updateUnreadNotesCount = function updateUnreadNotesCount() {
@@ -246,7 +249,7 @@ function ScreenCaster(config) {
 
     event.preventDefault();
 
-    let button = event.currentTarget;
+    var button = event.currentTarget;
     var noteId = $(button.parentElement).data("note-id");
 
     var $rawContent = $("textarea[data-note-id='" + noteId + "'].raw-content");
@@ -383,6 +386,9 @@ function ScreenCaster(config) {
       headers: this.headers
     }).done(function (response) { //
       // console.log(response);
+
+      // FIXME find a way to highlight only the added note
+      Prism.highlightAll();
     });
   }.bind(this);
 

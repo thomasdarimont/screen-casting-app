@@ -224,7 +224,7 @@
       <plugin>
         <groupId>org.owasp</groupId>
         <artifactId>dependency-check-maven</artifactId>
-        <version>1.4.5</version>
+        <version>4.0.2</version>
         <configuration>
           <!-- Skip artifacts not bundled in distribution (provided scope) -->
           <skipProvidedScope>true</skipProvidedScope>

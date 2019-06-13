@@ -2,8 +2,6 @@ package de.tdlabs.apps.screencaster.settings;
 
 import de.tdlabs.apps.screencaster.ScreenCasterProperties;
 import de.tdlabs.apps.screencaster.config.WebsocketDestinations;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.core.task.TaskExecutor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 

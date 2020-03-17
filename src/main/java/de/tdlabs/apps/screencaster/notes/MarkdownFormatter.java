@@ -2,6 +2,7 @@ package de.tdlabs.apps.screencaster.notes;
 
 import org.commonmark.Extension;
 import org.commonmark.ext.autolink.AutolinkExtension;
+import org.commonmark.node.Image;
 import org.commonmark.node.Link;
 import org.commonmark.node.Node;
 import org.commonmark.parser.Parser;
@@ -43,6 +44,8 @@ class MarkdownFormatter {
 
       if (node instanceof Link) {
         attributes.put("target", "_blank");
+      } else if (node instanceof Image) {
+        attributes.put("loading", "lazy");
       }
     }
   }

@@ -29,13 +29,13 @@ class MarkdownFormatter {
       .build();
     Node document = parser.parse(text);
     HtmlRenderer renderer = HtmlRenderer.builder() //
-      .attributeProviderFactory(context -> LinkAttributeProvider.INSTANCE) //
+      .attributeProviderFactory(context -> CustomAttributeProvider.INSTANCE) //
       .build();
 
     return renderer.render(document);
   }
 
-  enum LinkAttributeProvider implements AttributeProvider {
+  enum CustomAttributeProvider implements AttributeProvider {
 
     INSTANCE;
 

@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @Transactional
@@ -47,11 +49,22 @@ class SimpleNoteService implements NoteService {
 
   @Transactional(readOnly = true)
   public NoteEntity findById(Long id) {
-    return noteRepository.findById(id).orElse(null);
+    return noteRepository.findById(id).map(this::renderNoteHtml).orElse(null);
   }
 
   @Transactional(readOnly = true)
   public List<NoteEntity> findAll() {
-    return noteRepository.findAllByOrderByCreatedAtAsc();
+
+    Stream<NoteEntity> noteStream = noteRepository.findAllByOrderByCreatedAtAsc().stream();
+    return noteStream.map(this::renderNoteHtml).collect(Collectors.toList());
+  }
+
+  NoteEntity renderNoteHtml(NoteEntity noteEntity) {
+
+    String text = noteEntity.getText();
+    String html = markdownFormatter.format(text);
+    noteEntity.setHtml(html);
+
+    return noteEntity;
   }
 }

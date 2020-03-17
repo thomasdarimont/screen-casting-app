@@ -10,6 +10,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.Version;
 import javax.validation.constraints.NotEmpty;
 import java.time.LocalDateTime;
@@ -24,8 +25,7 @@ class NoteEntity extends AbstractPersistable<Long> {
   @Column(length = 64000)
   private String text;
 
-  @NotEmpty
-  @Column(length = 64000)
+  @Transient
   private String html;
 
   @CreatedDate

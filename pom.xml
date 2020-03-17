@@ -25,7 +25,7 @@
 
     <java.version>1.8</java.version>
     <commonmark.version>0.12.1</commonmark.version>
-    <dorkbox-systray.version>3.14</dorkbox-systray.version>
+    <dorkbox-systray.version>3.17</dorkbox-systray.version>
     <!-- Fix Java 9 BUG https://issues.jboss.org/browse/UNDERTOW-1187 -->
     <!--<undertow.version>1.4.21.Final</undertow.version>-->
   </properties>
